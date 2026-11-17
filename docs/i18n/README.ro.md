@@ -1,12 +1,12 @@
 # PSOrvia Charts
 
-[![PSOrvia Charts](../preview.webp)](https://h-peterseim.github.io/psorvia-charts/demo.html)
-
 **Grafice animate și accesibile pentru site-ul tău**
+
+PSOrvia · [psorvia.io](https://psorvia.io)
 
 ### ▶ [Demonstrație live](https://h-peterseim.github.io/psorvia-charts/demo.html)
 
-Bare în jurul unei linii de bază, bare grupate, linii, plăci cu cifre-cheie și o vizualizare ca tabel. JavaScript și CSS simplu, fără dependențe: valorile stau lângă marcaje, fiecare grafic funcționează cu tastatura, iar cu mișcare redusă nu se mișcă nimic.
+Bare, linii, grafice circulare și inel, bare suprapuse și de 100 %, arii, puncte și bule, histogramă, sparkline, cadran, hartă termică, radar, plăci cu cifre-cheie și o vizualizare ca tabel. JavaScript și CSS simplu, fără dependențe: valorile stau lângă marcaje, fiecare grafic funcționează cu tastatura, iar cu mișcare redusă nu se mișcă nimic.
 
 ## Utilizare
 
@@ -26,8 +26,11 @@ PsoCharts.create(document.getElementById('speed'), {
 ```html
 <script type="module">
 import { create, auto } from './psorvia-charts.esm.js';
+import './psorvia-charts.extra.esm.js'; // doar pentru scatter, hist, gauge, heat, radar
 auto();
 </script>
+
+Nucleul cuprinde bare, linii, arie, grafic circular, inel, bare suprapuse și de 100 %, plăci, sparkline și tabel. Graficele scatter, histogramă, cadran, hartă termică și radar se află într-un al doilea fișier, `psorvia-charts.extra.js` (script clasic, încărcat după scriptul principal) sau `psorvia-charts.extra.esm.js` (modul). Fără el, aceste tipuri raportează o eroare clară și nimic altceva nu se schimbă.
 ```
 
 ## Tipuri de grafice
@@ -36,16 +39,26 @@ auto();
 |---|---|
 | `bars` | O bară pe valoare, crescând de la o linie de bază (`baseline: 1` separă mai rapid de mai lent). Mai multe serii dau bare grupate. |
 | `lines` | O linie pe serie peste categorii, cu etichetă la capătul liniei. |
-| `tiles` | Plăci cu cifre-cheie, cu un număr care numără în sus, un marcaj (▲ ▼ =) și un text scurt. |
+| `area` | Linii umplute de la zero; `stacked: true` suprapune seriile (valorile negative contează ca 0). |
+| `stacked` | O bară pe categorie, seriile puse cap la cap; valoarea în fiecare segment, totalul la capăt. |
+| `percent` | Același lucru ca bare de 100 %; fiecare segment arată ponderea sa în categorie. |
+| `pie`, `donut` | O serie, o felie pe categorie, etichetă cu valoare și pondere pe o linie de ghidaj (pe ecrane înguste într-o listă dedesubt). De la 7 felii în sus, cele mai mici se unesc în „Altele” (`maxSlices`, implicit 6; `other: false` le păstrează pe toate). Inelul arată totalul la mijloc (`center: 'mean'` pentru medie, `false` pentru nimic). |
+| `tiles` | Plăci cu cifre-cheie, cu un număr care numără în sus, un marcaj (▲ ▼ =) și un text scurt. Un element poate purta `spark: [values]` pentru o linie mică. |
 | `table` | Un tabel simplu. |
+| `spark` | O linie mică pentru text curgător și plăci: `values`, opțional `width` și `height`; arată ultima valoare, săgețile parcurg punctele. |
+| `scatter` | *(extra)* Puncte sau bule. Categoriile sunt punctele, prima serie este x, a doua y, o a treia opțională dă mărimea bulei. |
+| `hist` | *(extra)* Histogramă a valorilor brute din prima serie; `bins` sau `binWidth`, altfel automat. Vizualizarea ca tabel arată clasele. |
+| `gauge` | *(extra)* Un cadran pe categorie din prima serie, `min` și `max`, opțional `bands: [{ to, label }]` desenate ca zone cu model; numele zonei apare sub număr. |
+| `heat` | *(extra)* Grilă de categorii (rânduri) și serii (coloane), culoarea celulei după valoare, numărul în fiecare celulă. Culoarea textului este aleasă astfel încât să păstreze 4,5:1 față de celulă. |
+| `radar` | *(extra)* 3 până la 8 axe (categorii) și cel mult 3 serii, valorile la puncte. Mai multe axe sau serii sunt respinse cu o eroare: dincolo de asta un grafic radar nu mai e lizibil, folosește bare. |
 
-`bars` și `lines` au un comutator între grafic și tabel, o legendă care ascunde serii și o zonă de citire sub grafic.
+`values` în loc de `series` și `categories` este o scurtătură pentru o singură serie (`hist`, `spark`); `value` este o scurtătură pentru un singur `gauge`. Fiecare tip de grafic, cu excepția `tiles`, `table` și `spark`, are un comutator între grafic și tabel; tipurile cu serii au o legendă care ascunde serii; toate au o zonă de citire sub grafic.
 
 ## Opțiuni
 
 | Opțiune | Implicit | |
 |---|---|---|
-| `type` | | `bars`, `lines`, `tiles` sau `table` |
+| `type` | | Unul dintre tipurile de mai sus |
 | `title` | | Titlul graficului, totodată numele accesibil |
 | `desc` | | Descriere scurtă sub titlu |
 | `categories` | | `[{ label, note }]`, `note` apare în zona de citire și în tabel |
@@ -59,7 +72,11 @@ auto();
 | `source` | | Text de subsol sub grafic |
 | `legend` | `true` | `false` ascunde legenda |
 | `zero` | `false` | Linii: include 0 pe axa valorilor |
-| `labels` | engleză | `{ chart, table, view, na, hint, keys }`, formulările tale |
+| `stacked` | `false` | Arie: suprapune seriile |
+| `maxSlices`, `other`, `center` | `6`, `true`, `'sum'` | Grafic circular și inel, vezi mai sus |
+| `bins`, `binWidth` | automat | Histogramă |
+| `min`, `max`, `bands` | `0`, `100` | Cadran (`gauge`) |
+| `labels` | engleză | `{ chart, table, view, na, hint, keys, other, sum, mean, share, count, range, size }`, formulările tale |
 | `lang` | limba paginii | Formatul numerelor, prin `Intl.NumberFormat` |
 | `style` | `house` | `house`, `gauge`, `plain` sau `genre` |
 | `theme` | automat | `light` sau `dark` pentru a forța una |
@@ -113,7 +130,7 @@ Culorile sunt proprietăți personalizate CSS pe `.pc`, pentru luminos și întu
 |---|---|
 | `--pc-bg`, `--pc-fg`, `--pc-mut` | Fundal, text, text secundar |
 | `--pc-grid`, `--pc-sep` | Linii de grilă, separatoare |
-| `--pc-0` până la `--pc-3` | Culorile seriilor |
+| `--pc-0` până la `--pc-5` | Culorile seriilor și ale feliilor; `--pc-5` este și culoarea pentru „Altele” |
 | `--pc-good`, `--pc-bad` | Marginea plăcii pentru mai bine și mai rău |
 | `--pc-cur` | Conturul marcajului selectat |
 | `--pc-font`, `--pc-r` | Font și raza colțurilor |
@@ -122,18 +139,18 @@ Culorile sunt proprietăți personalizate CSS pe `.pc`, pentru luminos și întu
 
 ## Accesibilitate
 
-- Imaginea este un `img` cu etichetă; sub ea se află o zonă de tastatură: Tab ajunge la grafic, săgețile se mută între marcaje, Home și End sar, Escape șterge selecția. Marcajul selectat este conturat și citit într-o regiune `aria-live`.
-- Fiecare grafic are o vizualizare ca tabel, cu anteturi corecte. Seriile se deosebesc prin model (bare) și formă (linii), nu doar prin culoare; mai bine și mai rău la plăci prin marcaj și cuvânt.
+- Imaginea este un `img` cu etichetă; sub ea se află o zonă de tastatură: Tab ajunge la grafic, săgețile se mută între marcaje (felii, puncte, celule, cadrane, clase), Home și End sar, Escape șterge selecția. Marcajul selectat este conturat și citit într-o regiune `aria-live`.
+- Fiecare grafic are o vizualizare ca tabel, cu anteturi corecte. Seriile și feliile se deosebesc prin model (bare, arii, grafice circulare) și formă (linii, puncte), nu doar prin culoare; celulele hărții termice poartă numărul, zonele cadranului numele lor; mai bine și mai rău la plăci prin marcaj și cuvânt.
 - Tot textul are cel puțin 13 px și un contrast de cel puțin 4,5:1; marcajele au cel puțin 3:1. Suita de teste verifică toate cele patru stiluri în luminos și întunecat.
 - Cu mișcare redusă (setarea sistemului sau `motion: 'off'`) barele și liniile sunt desenate imediat, iar numerele nu numără în sus.
 
 ## Performanță
 
-Aproximativ 23 KB de script și 8 KB de CSS, aproximativ 10 KB împreună cu gzip, fără dependențe. Graficele se redesenează doar la schimbarea lățimii; animația folosește CSS și pornește când graficul ajunge în vizor.
+Nucleul are aproximativ 37 KB de script și 12 KB de CSS, împreună 14,7 KB cu gzip; tipurile extra adaugă 5,6 KB cu gzip. Fără dependențe. Graficele se redesenează doar la schimbarea lățimii; animația folosește CSS și pornește când graficul ajunge în vizor.
 
 ## Teste
 
-`python3 tools/build.py` construiește cele trei fișiere din `src/`. `python3 tests/browser.py` deschide `demo.html` în Chromium headless (necesită pachetul Python `websockets`), verifică contrastul, dimensiunea fontului, tastatura, vizualizarea ca tabel și mișcarea redusă, iar `--photos <folder>` salvează capturi de ecran în luminos, întunecat și cu mișcare redusă.
+`python3 tools/build.py` construiește cele cinci fișiere din `src/`. `python3 tests/browser.py` deschide `demo.html` în Chromium headless (necesită pachetul Python `websockets`), verifică contrastul, dimensiunea fontului, tastatura, vizualizarea ca tabel și mișcarea redusă pentru fiecare tip, toate cele trei surse de date, textul care iese din grafic, iar `--photos <folder>` salvează capturi de ecran în luminos, întunecat și cu mișcare redusă.
 
 ## Traduceri
 

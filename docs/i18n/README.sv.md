@@ -1,12 +1,12 @@
 # PSOrvia Charts
 
-[![PSOrvia Charts](../preview.webp)](https://h-peterseim.github.io/psorvia-charts/demo.html)
-
 **Animerade, tillgängliga diagram för din webbplats**
+
+PSOrvia · [psorvia.io](https://psorvia.io)
 
 ### ▶ [Livedemo](https://h-peterseim.github.io/psorvia-charts/demo.html)
 
-Staplar kring en baslinje, grupperade staplar, linjer, brickor med nyckeltal och en tabellvy. Ren JavaScript och CSS utan beroenden: värdena står intill markeringarna, varje diagram fungerar med tangentbord, och vid reducerad rörelse rör sig ingenting.
+Staplar, linjer, cirkel- och ringdiagram, staplade och 100-procentsstaplar, ytor, punkt- och bubbeldiagram, histogram, sparkline, mätare, värmekarta, radar, brickor med nyckeltal och en tabellvy. Ren JavaScript och CSS utan beroenden: värdena står intill markeringarna, varje diagram fungerar med tangentbord, och vid reducerad rörelse rör sig ingenting.
 
 ## Användning
 
@@ -26,8 +26,11 @@ PsoCharts.create(document.getElementById('speed'), {
 ```html
 <script type="module">
 import { create, auto } from './psorvia-charts.esm.js';
+import './psorvia-charts.extra.esm.js'; // endast för scatter, hist, gauge, heat, radar
 auto();
 </script>
+
+Kärnan omfattar staplar, linjer, yta, cirkel, ring, staplade och 100-procentsstaplar, brickor, sparkline och tabell. Punktdiagram, histogram, mätare, värmekarta och radar finns i en andra fil, `psorvia-charts.extra.js` (klassiskt skript, ladda det efter huvudskriptet) eller `psorvia-charts.extra.esm.js` (modul). Utan den rapporterar dessa typer ett tydligt fel och inget annat ändras.
 ```
 
 ## Diagramtyper
@@ -36,16 +39,26 @@ auto();
 |---|---|
 | `bars` | En stapel per värde, växande från en baslinje (`baseline: 1` skiljer snabbare från långsammare). Flera serier ger grupperade staplar. |
 | `lines` | En linje per serie över kategorierna, med etikett i slutet av linjen. |
-| `tiles` | Brickor med nyckeltal: ett tal som räknar upp, en markering (▲ ▼ =) och en kort text. |
+| `area` | Fyllda linjer från noll; `stacked: true` staplar serierna (negativa värden räknas som 0). |
+| `stacked` | En stapel per kategori, serierna lagda efter varandra; värdet i varje segment, totalen i slutet. |
+| `percent` | Samma sak som 100-procentsstaplar; varje segment visar sin andel av kategorin. |
+| `pie`, `donut` | En serie, en sektor per kategori, etikett med värde och andel på en ledlinje (på smala skärmar i en lista under diagrammet). Från 7 sektorer slås de minsta ihop till ”Övrigt” (`maxSlices`, standard 6; `other: false` behåller alla). Ringen visar totalen i mitten (`center: 'mean'` för medelvärdet, `false` för ingenting). |
+| `tiles` | Brickor med nyckeltal: ett tal som räknar upp, en markering (▲ ▼ =) och en kort text. Ett objekt kan ha `spark: [values]` för en liten linje. |
 | `table` | En vanlig tabell. |
+| `spark` | En liten linje för löpande text och brickor: `values`, valfritt `width` och `height`; visar det sista värdet, piltangenterna stegar genom punkterna. |
+| `scatter` | *(extra)* Punkter eller bubblor. Kategorierna är punkterna, första serien är x, andra y, en valfri tredje ger bubblans storlek. |
+| `hist` | *(extra)* Histogram över råvärdena i första serien; `bins` eller `binWidth`, annars automatiskt. Tabellvyn visar klasserna. |
+| `gauge` | *(extra)* En mätare per kategori från första serien, `min` och `max`, valfritt `bands: [{ to, label }]` ritade som mönstrade zoner; zonens namn står under talet. |
+| `heat` | *(extra)* Rutnät av kategorier (rader) och serier (kolumner), cellfärg efter värdet, talet i varje cell. Textfärgen väljs så att den håller 4,5:1 mot cellen. |
+| `radar` | *(extra)* 3 till 8 axlar (kategorier) och högst 3 serier, värden vid punkterna. Fler axlar eller serier avvisas med ett fel: bortom det går ett radardiagram inte att läsa, använd staplar. |
 
-`bars` och `lines` har en omkopplare mellan diagram och tabell, en förklaring som döljer serier och en avläsning under diagrammet.
+`values` i stället för `series` och `categories` är en genväg för en enda serie (`hist`, `spark`); `value` är en genväg för en enda `gauge`. Varje diagramtyp utom `tiles`, `table` och `spark` har en omkopplare mellan diagram och tabell; serietyper har en förklaring som döljer serier; alla har en avläsning under diagrammet.
 
 ## Alternativ
 
 | Alternativ | Standard | |
 |---|---|---|
-| `type` | | `bars`, `lines`, `tiles` eller `table` |
+| `type` | | En av typerna ovan |
 | `title` | | Diagrammets rubrik, även det tillgängliga namnet |
 | `desc` | | Kort beskrivning under rubriken |
 | `categories` | | `[{ label, note }]`, `note` visas i avläsningen och i tabellen |
@@ -59,7 +72,11 @@ auto();
 | `source` | | Sidfotstext under diagrammet |
 | `legend` | `true` | `false` döljer förklaringen |
 | `zero` | `false` | Linjer: ta med 0 på värdeaxeln |
-| `labels` | engelska | `{ chart, table, view, na, hint, keys }`, dina egna formuleringar |
+| `stacked` | `false` | Yta: stapla serierna |
+| `maxSlices`, `other`, `center` | `6`, `true`, `'sum'` | Cirkel och ring, se ovan |
+| `bins`, `binWidth` | automatiskt | Histogram |
+| `min`, `max`, `bands` | `0`, `100` | Mätare (`gauge`) |
+| `labels` | engelska | `{ chart, table, view, na, hint, keys, other, sum, mean, share, count, range, size }`, dina egna formuleringar |
 | `lang` | sidans språk | Talformat, via `Intl.NumberFormat` |
 | `style` | `house` | `house`, `gauge`, `plain` eller `genre` |
 | `theme` | automatiskt | `light` eller `dark` för att tvinga fram ett |
@@ -113,7 +130,7 @@ Färgerna är anpassade CSS-egenskaper på `.pc`, för ljust och mörkt (systemi
 |---|---|
 | `--pc-bg`, `--pc-fg`, `--pc-mut` | Bakgrund, text, sekundär text |
 | `--pc-grid`, `--pc-sep` | Rutnätslinjer, avskiljare |
-| `--pc-0` till `--pc-3` | Serierfärger |
+| `--pc-0` till `--pc-5` | Serie- och sektorfärger; `--pc-5` är också färgen för ”Övrigt” |
 | `--pc-good`, `--pc-bad` | Brickkant för bättre och sämre |
 | `--pc-cur` | Kontur kring den valda markeringen |
 | `--pc-font`, `--pc-r` | Typsnitt och hörnradie |
@@ -122,18 +139,18 @@ Färgerna är anpassade CSS-egenskaper på `.pc`, för ljust och mörkt (systemi
 
 ## Tillgänglighet
 
-- Bilden är en `img` med en etikett; under den finns en tangentbordsyta: Tab når diagrammet, piltangenterna flyttar mellan markeringar, Home och End hoppar, Escape rensar. Den valda markeringen får en kontur och läses upp i en `aria-live`-region.
-- Varje diagram har en tabellvy med riktiga rubriker. Serier skiljer sig åt genom mönster (staplar) och form (linjer), inte bara färg; bättre och sämre på brickor genom markering och ord.
+- Bilden är en `img` med en etikett; under den finns en tangentbordsyta: Tab når diagrammet, piltangenterna flyttar mellan markeringar (sektorer, punkter, celler, mätare, klasser), Home och End hoppar, Escape rensar. Den valda markeringen får en kontur och läses upp i en `aria-live`-region.
+- Varje diagram har en tabellvy med riktiga rubriker. Serier och sektorer skiljer sig åt genom mönster (staplar, ytor, cirklar) och form (linjer, punkter), inte bara färg; värmekartans celler bär sitt tal, mätarens zoner sitt namn; bättre och sämre på brickor genom markering och ord.
 - All text är minst 13 px och har minst 4,5:1 i kontrast; markeringar har minst 3:1. Testsviten kontrollerar alla fyra stilar i ljust och mörkt.
 - Vid reducerad rörelse (systeminställning eller `motion: 'off'`) ritas staplar och linjer på en gång och talen räknar inte upp.
 
 ## Prestanda
 
-Cirka 23 KB skript och 8 KB CSS, cirka 10 KB gzippat tillsammans, utan beroenden. Diagram ritas om bara när bredden ändras; animationen använder CSS och startar när diagrammet rullas i bild.
+Kärnan är cirka 37 KB skript och 12 KB CSS, tillsammans 14,7 KB gzippat; extratyperna lägger till 5,6 KB gzippat. Inga beroenden. Diagram ritas om bara när bredden ändras; animationen använder CSS och startar när diagrammet rullas i bild.
 
 ## Tester
 
-`python3 tools/build.py` bygger de tre filerna från `src/`. `python3 tests/browser.py` öppnar `demo.html` i headless Chromium (kräver Python-paketet `websockets`), kontrollerar kontrast, teckenstorlek, tangentbord, tabellvy och reducerad rörelse, och `--photos <folder>` sparar skärmbilder i ljust, mörkt och reducerad rörelse.
+`python3 tools/build.py` bygger de fem filerna från `src/`. `python3 tests/browser.py` öppnar `demo.html` i headless Chromium (kräver Python-paketet `websockets`), kontrollerar kontrast, teckenstorlek, tangentbord, tabellvy och reducerad rörelse för varje typ, alla tre datakällor, text som sticker ut ur diagrammet, och `--photos <folder>` sparar skärmbilder i ljust, mörkt och reducerad rörelse.
 
 ## Översättningar
 

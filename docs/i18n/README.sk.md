@@ -1,12 +1,12 @@
 # PSOrvia Charts
 
-[![PSOrvia Charts](../preview.webp)](https://h-peterseim.github.io/psorvia-charts/demo.html)
-
 **Animované a prístupné grafy pre váš web**
+
+PSOrvia · [psorvia.io](https://psorvia.io)
 
 ### ▶ [Živá ukážka](https://h-peterseim.github.io/psorvia-charts/demo.html)
 
-Stĺpce okolo základnej čiary, zoskupené stĺpce, čiary, dlaždice s kľúčovými číslami a tabuľkové zobrazenie. Čistý JavaScript a CSS bez závislostí: hodnoty sú vedľa značiek, každý graf funguje s klávesnicou a pri obmedzenom pohybe sa nič nehýbe.
+Stĺpce, čiary, koláčové a prstencové grafy, skladané a 100 % stĺpce, plochy, bodové a bublinové grafy, histogram, sparkline, ciferník, teplotná mapa, radar, dlaždice s kľúčovými číslami a tabuľkové zobrazenie. Čistý JavaScript a CSS bez závislostí: hodnoty sú vedľa značiek, každý graf funguje s klávesnicou a pri obmedzenom pohybe sa nič nehýbe.
 
 ## Použitie
 
@@ -26,8 +26,11 @@ PsoCharts.create(document.getElementById('speed'), {
 ```html
 <script type="module">
 import { create, auto } from './psorvia-charts.esm.js';
+import './psorvia-charts.extra.esm.js'; // iba pre scatter, hist, gauge, heat, radar
 auto();
 </script>
+
+Jadro obsahuje stĺpce, čiary, plochu, koláč, prstenec, skladané a 100 % stĺpce, dlaždice, sparkline a tabuľku. Bodový graf, histogram, ciferník, teplotná mapa a radar sú v druhom súbore, `psorvia-charts.extra.js` (klasický skript, načítajte ho po hlavnom skripte) alebo `psorvia-charts.extra.esm.js` (modul). Bez neho tieto typy hlásia jasnú chybu a nič iné sa nemení.
 ```
 
 ## Typy grafov
@@ -36,16 +39,26 @@ auto();
 |---|---|
 | `bars` | Jeden stĺpec na hodnotu, rastúci od základnej čiary (`baseline: 1` oddeľuje rýchlejšie od pomalšieho). Viac sérií dáva zoskupené stĺpce. |
 | `lines` | Jedna čiara na sériu cez kategórie, s popisom na konci čiary. |
-| `tiles` | Dlaždice s kľúčovými číslami: číslo, ktoré sa počíta nahor, značka (▲ ▼ =) a krátky text. |
+| `area` | Vyplnené čiary od nuly; `stacked: true` skladá série na seba (záporné hodnoty sa počítajú ako 0). |
+| `stacked` | Jeden stĺpec na kategóriu, série zoradené za sebou; hodnota v každom úseku, súčet na konci. |
+| `percent` | To isté ako 100 % stĺpce; každý úsek ukazuje svoj podiel na kategórii. |
+| `pie`, `donut` | Jedna séria, jeden výsek na kategóriu, popis s hodnotou a podielom na vodiacej čiare (na úzkych obrazovkách v zozname pod grafom). Od 7 výsekov sa najmenšie zlúčia do „Ostatné“ (`maxSlices`, predvolene 6; `other: false` ponechá všetky). Prstenec ukazuje súčet v strede (`center: 'mean'` pre priemer, `false` pre nič). |
+| `tiles` | Dlaždice s kľúčovými číslami: číslo, ktoré sa počíta nahor, značka (▲ ▼ =) a krátky text. Položka môže niesť `spark: [values]` pre malú čiaru. |
 | `table` | Obyčajná tabuľka. |
+| `spark` | Malá čiara pre plynulý text a dlaždice: `values`, voliteľne `width` a `height`; ukazuje poslednú hodnotu, šípky prechádzajú body. |
+| `scatter` | *(extra)* Body alebo bubliny. Kategórie sú body, prvá séria je x, druhá y, voliteľná tretia veľkosť bubliny. |
+| `hist` | *(extra)* Histogram surových hodnôt prvej série; `bins` alebo `binWidth`, inak automaticky. Tabuľkové zobrazenie ukazuje triedy. |
+| `gauge` | *(extra)* Jeden ciferník na kategóriu z prvej série, `min` a `max`, voliteľne `bands: [{ to, label }]` vykreslené ako zóny so vzorom; názov zóny je napísaný pod číslom. |
+| `heat` | *(extra)* Mriežka kategórií (riadky) a sérií (stĺpce), farba bunky podľa hodnoty, číslo v každej bunke. Farba textu sa volí tak, aby voči bunke držala 4,5:1. |
+| `radar` | *(extra)* 3 až 8 osí (kategórie) a najviac 3 série, hodnoty pri bodoch. Viac osí alebo sérií sa odmietne s chybou: nad to už radarový graf nie je čitateľný, použite stĺpce. |
 
-`bars` a `lines` majú prepínač medzi grafom a tabuľkou, legendu, ktorá skrýva série, a pole s údajmi pod grafom.
+`values` namiesto `series` a `categories` je skratka pre jednu sériu (`hist`, `spark`); `value` je skratka pre jeden `gauge`. Každý typ grafu okrem `tiles`, `table` a `spark` má prepínač medzi grafom a tabuľkou; typy so sériami majú legendu, ktorá skrýva série; všetky majú pole s údajmi pod grafom.
 
 ## Možnosti
 
 | Možnosť | Predvolené | |
 |---|---|---|
-| `type` | | `bars`, `lines`, `tiles` alebo `table` |
+| `type` | | Jeden z typov vyššie |
 | `title` | | Názov grafu, zároveň prístupný názov |
 | `desc` | | Krátky popis pod názvom |
 | `categories` | | `[{ label, note }]`, `note` sa zobrazí v poli s údajmi a v tabuľke |
@@ -59,7 +72,11 @@ auto();
 | `source` | | Text päty pod grafom |
 | `legend` | `true` | `false` skryje legendu |
 | `zero` | `false` | Čiary: zahrnie 0 na osi hodnôt |
-| `labels` | angličtina | `{ chart, table, view, na, hint, keys }`, vaše vlastné formulácie |
+| `stacked` | `false` | Plocha: skladať série na seba |
+| `maxSlices`, `other`, `center` | `6`, `true`, `'sum'` | Koláč a prstenec, pozri vyššie |
+| `bins`, `binWidth` | automaticky | Histogram |
+| `min`, `max`, `bands` | `0`, `100` | Ciferník (`gauge`) |
+| `labels` | angličtina | `{ chart, table, view, na, hint, keys, other, sum, mean, share, count, range, size }`, vaše vlastné formulácie |
 | `lang` | jazyk stránky | Formát čísel cez `Intl.NumberFormat` |
 | `style` | `house` | `house`, `gauge`, `plain` alebo `genre` |
 | `theme` | automaticky | `light` alebo `dark` na vynútenie jednej |
@@ -113,7 +130,7 @@ Farby sú vlastné vlastnosti CSS na `.pc`, pre svetlý a tmavý režim (nastave
 |---|---|
 | `--pc-bg`, `--pc-fg`, `--pc-mut` | Pozadie, text, vedľajší text |
 | `--pc-grid`, `--pc-sep` | Čiary mriežky, oddeľovače |
-| `--pc-0` až `--pc-3` | Farby sérií |
+| `--pc-0` až `--pc-5` | Farby sérií a výsekov; `--pc-5` je zároveň farba pre „Ostatné“ |
 | `--pc-good`, `--pc-bad` | Okraj dlaždice pre lepšie a horšie |
 | `--pc-cur` | Obrys vybranej značky |
 | `--pc-font`, `--pc-r` | Písmo a polomer rohov |
@@ -122,18 +139,18 @@ Farby sú vlastné vlastnosti CSS na `.pc`, pre svetlý a tmavý režim (nastave
 
 ## Prístupnosť
 
-- Obrázok je `img` s popisom; pod ním je klávesnicová oblasť: Tab dosiahne graf, šípky sa presúvajú medzi značkami, Home a End skáču, Escape zruší výber. Vybraná značka má obrys a číta sa v regióne `aria-live`.
-- Každý graf má tabuľkové zobrazenie so správnymi hlavičkami. Série sa líšia vzorom (stĺpce) a tvarom (čiary), nielen farbou; lepšie a horšie pri dlaždiciach značkou a slovom.
+- Obrázok je `img` s popisom; pod ním je klávesnicová oblasť: Tab dosiahne graf, šípky sa presúvajú medzi značkami (výseky, body, bunky, ciferníky, triedy), Home a End skáču, Escape zruší výber. Vybraná značka má obrys a číta sa v regióne `aria-live`.
+- Každý graf má tabuľkové zobrazenie so správnymi hlavičkami. Série a výseky sa líšia vzorom (stĺpce, plochy, koláče) a tvarom (čiary, body), nielen farbou; bunky teplotnej mapy nesú svoje číslo, zóny ciferníka svoj názov; lepšie a horšie pri dlaždiciach značkou a slovom.
 - Všetok text má aspoň 13 px a kontrast aspoň 4,5:1; značky majú aspoň 3:1. Testovacia sada kontroluje všetky štyri štýly vo svetlom aj tmavom režime.
 - Pri obmedzenom pohybe (nastavenie systému alebo `motion: 'off'`) sa stĺpce a čiary nakreslia naraz a čísla sa nepočítajú nahor.
 
 ## Výkon
 
-Približne 23 KB skriptu a 8 KB CSS, spolu približne 10 KB po gzip, bez závislostí. Grafy sa prekresľujú iba pri zmene šírky; animácia používa CSS a začne, keď graf zajde do zorného poľa.
+Jadro má približne 37 KB skriptu a 12 KB CSS, spolu 14,7 KB po gzip; extra typy pridajú 5,6 KB po gzip. Bez závislostí. Grafy sa prekresľujú iba pri zmene šírky; animácia používa CSS a začne, keď graf zajde do zorného poľa.
 
 ## Testy
 
-`python3 tools/build.py` zostaví tri súbory zo `src/`. `python3 tests/browser.py` otvorí `demo.html` v headless Chromium (vyžaduje balík Pythonu `websockets`), skontroluje kontrast, veľkosť písma, klávesnicu, tabuľkové zobrazenie a obmedzený pohyb a `--photos <folder>` uloží snímky obrazovky vo svetlom, tmavom režime a s obmedzeným pohybom.
+`python3 tools/build.py` zostaví päť súborov zo `src/`. `python3 tests/browser.py` otvorí `demo.html` v headless Chromium (vyžaduje balík Pythonu `websockets`), skontroluje kontrast, veľkosť písma, klávesnicu, tabuľkové zobrazenie a obmedzený pohyb pre každý typ, všetky tri zdroje údajov, text, ktorý presahuje graf, a `--photos <folder>` uloží snímky obrazovky vo svetlom, tmavom režime a s obmedzeným pohybom.
 
 ## Preklady
 

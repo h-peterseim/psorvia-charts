@@ -1,12 +1,12 @@
 # PSOrvia Charts
 
-[![PSOrvia Charts](../preview.webp)](https://h-peterseim.github.io/psorvia-charts/demo.html)
-
 **Animierte, barrierefreie Diagramme für deine Website**
+
+PSOrvia · [psorvia.io](https://psorvia.io)
 
 ### ▶ [Live-Demo](https://h-peterseim.github.io/psorvia-charts/demo.html)
 
-Balken um eine Bezugslinie, gruppierte Balken, Linien, Kennzahl-Kacheln und eine Tabellenansicht. Reines JavaScript und CSS ohne Abhängigkeiten: Die Werte stehen neben den Marken, jedes Diagramm funktioniert mit der Tastatur, und bei reduzierter Bewegung bewegt sich nichts.
+Balken, Linien, Kreis- und Ringdiagramme, gestapelte und 100-%-Balken, Flächen, Streu- und Blasendiagramme, Histogramm, Sparkline, Tacho, Heatmap, Radar, Kennzahl-Kacheln und eine Tabellenansicht. Reines JavaScript und CSS ohne Abhängigkeiten: Die Werte stehen neben den Marken, jedes Diagramm funktioniert mit der Tastatur, und bei reduzierter Bewegung bewegt sich nichts.
 
 ## Einbindung
 
@@ -26,8 +26,11 @@ PsoCharts.create(document.getElementById('speed'), {
 ```html
 <script type="module">
 import { create, auto } from './psorvia-charts.esm.js';
+import './psorvia-charts.extra.esm.js'; // nur für scatter, hist, gauge, heat, radar
 auto();
 </script>
+
+Der Kern enthält Balken, Linien, Fläche, Kreis, Ring, gestapelte und 100-%-Balken, Kacheln, Sparkline und Tabelle. Streu-, Histogramm-, Tacho-, Heatmap- und Radardiagramm liegen in einer zweiten Datei, `psorvia-charts.extra.js` (klassisches Skript, nach dem Hauptskript laden) oder `psorvia-charts.extra.esm.js` (Modul). Ohne sie melden diese Typen einen klaren Fehler, und sonst ändert sich nichts.
 ```
 
 ## Diagrammtypen
@@ -36,16 +39,26 @@ auto();
 |---|---|
 | `bars` | Einen Balken je Wert, der von einer Bezugslinie aus wächst (`baseline: 1` trennt schneller von langsamer). Mehrere Serien ergeben gruppierte Balken. |
 | `lines` | Eine Linie je Serie über die Kategorien, am Linienende beschriftet. |
-| `tiles` | Kennzahl-Kacheln mit einer hochzählenden Zahl, einer Marke (▲ ▼ =) und einem kurzen Text. |
+| `area` | Gefüllte Linien ab null; `stacked: true` stapelt die Serien (negative Werte zählen als 0). |
+| `stacked` | Ein Balken je Kategorie, die Serien aneinandergereiht; Wert in jedem Abschnitt, Summe am Ende. |
+| `percent` | Dasselbe als 100-%-Balken; jeder Abschnitt zeigt seinen Anteil an der Kategorie. |
+| `pie`, `donut` | Eine Serie, ein Stück je Kategorie, Beschriftung mit Wert und Anteil an einer Führungslinie (auf schmalen Bildschirmen in einer Liste darunter). Ab 7 Stücken werden die kleinsten zu „Andere“ zusammengefasst (`maxSlices`, Standard 6; `other: false` behält alle). Der Ring zeigt die Summe in der Mitte (`center: 'mean'` für den Mittelwert, `false` für nichts). |
+| `tiles` | Kennzahl-Kacheln mit einer hochzählenden Zahl, einer Marke (▲ ▼ =) und einem kurzen Text. Ein Eintrag kann `spark: [values]` für eine kleine Linie tragen. |
 | `table` | Eine einfache Tabelle. |
+| `spark` | Eine kleine Linie für Fließtext und Kacheln: `values`, optional `width` und `height`; zeigt den letzten Wert, die Pfeiltasten gehen durch die Punkte. |
+| `scatter` | *(extra)* Punkte oder Blasen. Die Kategorien sind die Punkte, die erste Serie ist x, die zweite y, eine optionale dritte die Blasengröße. |
+| `hist` | *(extra)* Histogramm der Rohwerte der ersten Serie; `bins` oder `binWidth`, sonst automatisch. Die Tabellenansicht zeigt die Klassen. |
+| `gauge` | *(extra)* Ein Zifferblatt je Kategorie aus der ersten Serie, `min` und `max`, optional `bands: [{ to, label }]` als gemusterte Zonen; der Zonenname steht unter der Zahl. |
+| `heat` | *(extra)* Raster aus Kategorien (Zeilen) und Serien (Spalten), Zellfarbe nach dem Wert, die Zahl in jeder Zelle. Die Textfarbe wird so gewählt, dass sie 4,5:1 gegen die Zelle hält. |
+| `radar` | *(extra)* 3 bis 8 Achsen (Kategorien) und höchstens 3 Serien, Werte an den Punkten. Mehr Achsen oder Serien werden mit einem Fehler abgelehnt: darüber ist ein Radardiagramm nicht lesbar, nimm Balken. |
 
-`bars` und `lines` haben einen Umschalter zwischen Diagramm und Tabelle, eine Legende, die Serien ausblendet, und eine Anzeige unter dem Diagramm.
+`values` statt `series` und `categories` ist eine Abkürzung für eine einzelne Serie (`hist`, `spark`); `value` ist eine Abkürzung für ein einzelnes `gauge`. Jeder Diagrammtyp außer `tiles`, `table` und `spark` hat einen Umschalter zwischen Diagramm und Tabelle; Serientypen haben eine Legende, die Serien ausblendet; alle haben eine Anzeige unter dem Diagramm.
 
 ## Optionen
 
 | Option | Standard | |
 |---|---|---|
-| `type` | | `bars`, `lines`, `tiles` oder `table` |
+| `type` | | Einer der obigen Typen |
 | `title` | | Diagrammtitel, zugleich der zugängliche Name |
 | `desc` | | Kurze Beschreibung unter dem Titel |
 | `categories` | | `[{ label, note }]`, `note` erscheint in der Anzeige und in der Tabelle |
@@ -59,7 +72,11 @@ auto();
 | `source` | | Fußtext unter dem Diagramm |
 | `legend` | `true` | `false` blendet die Legende aus |
 | `zero` | `false` | Linien: 0 in die Wertachse aufnehmen |
-| `labels` | Englisch | `{ chart, table, view, na, hint, keys }`, deine eigenen Formulierungen |
+| `stacked` | `false` | Fläche: Serien stapeln |
+| `maxSlices`, `other`, `center` | `6`, `true`, `'sum'` | Kreis und Ring, siehe oben |
+| `bins`, `binWidth` | automatisch | Histogramm |
+| `min`, `max`, `bands` | `0`, `100` | Tacho (`gauge`) |
+| `labels` | Englisch | `{ chart, table, view, na, hint, keys, other, sum, mean, share, count, range, size }`, deine eigenen Formulierungen |
 | `lang` | Seitensprache | Zahlenformat über `Intl.NumberFormat` |
 | `style` | `house` | `house`, `gauge`, `plain` oder `genre` |
 | `theme` | automatisch | `light` oder `dark`, um eines zu erzwingen |
@@ -113,7 +130,7 @@ Die Farben sind CSS-Eigenschaften (Custom Properties) auf `.pc`, für Hell und D
 |---|---|
 | `--pc-bg`, `--pc-fg`, `--pc-mut` | Hintergrund, Text, Nebentext |
 | `--pc-grid`, `--pc-sep` | Gitterlinien, Trennlinien |
-| `--pc-0` bis `--pc-3` | Serienfarben |
+| `--pc-0` bis `--pc-5` | Serien- und Stückfarben; `--pc-5` ist zugleich die Farbe von „Andere“ |
 | `--pc-good`, `--pc-bad` | Kachelrand für besser und schlechter |
 | `--pc-cur` | Umriss der ausgewählten Marke |
 | `--pc-font`, `--pc-r` | Schrift und Eckenradius |
@@ -122,18 +139,18 @@ Die Farben sind CSS-Eigenschaften (Custom Properties) auf `.pc`, für Hell und D
 
 ## Barrierefreiheit
 
-- Das Bild ist ein `img` mit Beschriftung; darunter liegt ein Tastaturbereich: Mit Tab erreichst du das Diagramm, die Pfeiltasten wechseln zwischen Marken, Pos1 und Ende springen, Escape hebt die Auswahl auf. Die ausgewählte Marke wird umrandet und in einem `aria-live`-Bereich vorgelesen.
-- Jedes Diagramm hat eine Tabellenansicht mit richtigen Überschriften. Serien unterscheiden sich durch Muster (Balken) und Form (Linien), nicht nur durch Farbe; besser und schlechter auf Kacheln durch Marke und Wort.
+- Das Bild ist ein `img` mit Beschriftung; darunter liegt ein Tastaturbereich: Mit Tab erreichst du das Diagramm, die Pfeiltasten wechseln zwischen Marken (Stücken, Punkten, Zellen, Zifferblättern, Klassen), Pos1 und Ende springen, Escape hebt die Auswahl auf. Die ausgewählte Marke wird umrandet und in einem `aria-live`-Bereich vorgelesen.
+- Jedes Diagramm hat eine Tabellenansicht mit richtigen Überschriften. Serien und Stücke unterscheiden sich durch Muster (Balken, Flächen, Kreise) und Form (Linien, Punkte), nicht nur durch Farbe; Heatmap-Zellen tragen ihre Zahl, Tacho-Zonen ihren Namen; besser und schlechter auf Kacheln durch Marke und Wort.
 - Aller Text ist mindestens 13 px groß und hat mindestens 4,5:1 Kontrast; Marken haben mindestens 3:1. Die Testsuite prüft alle vier Stile in Hell und Dunkel.
 - Bei reduzierter Bewegung (Systemeinstellung oder `motion: 'off'`) werden Balken und Linien sofort gezeichnet, und die Zahlen zählen nicht hoch.
 
 ## Leistung
 
-Etwa 23 KB Skript und 8 KB CSS, zusammen etwa 10 KB gzip-komprimiert, ohne Abhängigkeiten. Diagramme werden nur bei Breitenänderung neu gezeichnet; die Animation nutzt CSS und startet, wenn das Diagramm ins Bild scrollt.
+Der Kern hat etwa 37 KB Skript und 12 KB CSS, zusammen 14,7 KB gzip-komprimiert; die Zusatztypen kommen mit 5,6 KB gzip dazu. Ohne Abhängigkeiten. Diagramme werden nur bei Breitenänderung neu gezeichnet; die Animation nutzt CSS und startet, wenn das Diagramm ins Bild scrollt.
 
 ## Tests
 
-`python3 tools/build.py` baut die drei Dateien aus `src/`. `python3 tests/browser.py` öffnet `demo.html` in headless Chromium (braucht das Python-Paket `websockets`), prüft Kontrast, Schriftgröße, Tastatur, Tabellenansicht und reduzierte Bewegung, und `--photos <folder>` speichert Screenshots in Hell, Dunkel und mit reduzierter Bewegung.
+`python3 tools/build.py` baut die fünf Dateien aus `src/`. `python3 tests/browser.py` öffnet `demo.html` in headless Chromium (braucht das Python-Paket `websockets`), prüft Kontrast, Schriftgröße, Tastatur, Tabellenansicht und reduzierte Bewegung für jeden Typ, alle drei Datenquellen, Text, der aus dem Diagramm ragt, und `--photos <folder>` speichert Screenshots in Hell, Dunkel und mit reduzierter Bewegung.
 
 ## Übersetzungen
 

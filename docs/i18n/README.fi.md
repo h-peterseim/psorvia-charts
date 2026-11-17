@@ -1,12 +1,12 @@
 # PSOrvia Charts
 
-[![PSOrvia Charts](../preview.webp)](https://h-peterseim.github.io/psorvia-charts/demo.html)
-
 **Animoidut, saavutettavat kaaviot verkkosivullesi**
+
+PSOrvia · [psorvia.io](https://psorvia.io)
 
 ### ▶ [Live-demo](https://h-peterseim.github.io/psorvia-charts/demo.html)
 
-Pylväät perusviivan ympärillä, ryhmitetyt pylväät, viivat, tunnuslukulaatat ja taulukkonäkymä. Pelkkää JavaScriptiä ja CSS:ää ilman riippuvuuksia: arvot ovat merkkien vieressä, jokainen kaavio toimii näppäimistöllä, ja vähennetyllä liikkeellä mikään ei liiku.
+Pylväät, viivat, ympyrä- ja rengaskaaviot, pinotut ja 100 %:n pylväät, alueet, pistejoukot ja kuplat, histogrammi, sparkline, mittari, lämpökartta, tutkakaavio, tunnuslukulaatat ja taulukkonäkymä. Pelkkää JavaScriptiä ja CSS:ää ilman riippuvuuksia: arvot ovat merkkien vieressä, jokainen kaavio toimii näppäimistöllä, ja vähennetyllä liikkeellä mikään ei liiku.
 
 ## Käyttö
 
@@ -26,9 +26,12 @@ PsoCharts.create(document.getElementById('speed'), {
 ```html
 <script type="module">
 import { create, auto } from './psorvia-charts.esm.js';
+import './psorvia-charts.extra.esm.js'; // vain scatter-, hist-, gauge-, heat- ja radar-tyypeille
 auto();
 </script>
 ```
+
+Ydin kattaa pylväät, viivat, alueen, ympyrän, renkaan, pinotut ja 100 %:n pylväät, laatat, sparklinen ja taulukon. Scatter, histogrammi, mittari, lämpökartta ja tutkakaavio ovat toisessa tiedostossa, `psorvia-charts.extra.js` (tavallinen skripti, lataa pääskriptin jälkeen) tai `psorvia-charts.extra.esm.js` (moduuli). Ilman sitä nämä tyypit ilmoittavat selkeän virheen eikä muu muutu.
 
 ## Kaaviotyypit
 
@@ -36,16 +39,26 @@ auto();
 |---|---|
 | `bars` | Yhden pylvään arvoa kohti, kasvamassa perusviivasta (`baseline: 1` erottaa nopeamman hitaammasta). Useampi sarja antaa ryhmitetyt pylväät. |
 | `lines` | Yhden viivan sarjaa kohti luokkien yli, nimettynä viivan päässä. |
-| `tiles` | Tunnuslukulaatat, joissa on ylöspäin laskeva luku, merkki (▲ ▼ =) ja lyhyt teksti. |
+| `area` | Täytetyt viivat nollasta; `stacked: true` pinoaa sarjat (negatiiviset arvot lasketaan nollaksi). |
+| `stacked` | Yksi pylväs luokkaa kohti, sarjat pinottuna peräkkäin; arvo kussakin osassa, summa lopussa. |
+| `percent` | Sama kuin 100 %:n pylväät; jokainen osa näyttää osuutensa luokasta. |
+| `pie`, `donut` | Yksi sarja, yksi sektori luokkaa kohti, nimi arvoineen ja osuuksineen osoitinviivalla (kapealla näytöllä luettelona alla). Seitsemännestä sektorista alkaen pienimmät yhdistetään ryhmään "Muut" (`maxSlices`, oletus 6; `other: false` säilyttää kaikki). Rengas näyttää keskellä summan (`center: 'mean'` keskiarvolle, `false` ei mitään). |
+| `tiles` | Tunnuslukulaatat, joissa on ylöspäin laskeva luku, merkki (▲ ▼ =) ja lyhyt teksti. Kohteella voi olla `spark: [values]` pientä viivaa varten. |
 | `table` | Tavallinen taulukko. |
+| `spark` | Pieni viiva leipätekstiin ja laattoihin: `values`, valinnaiset `width` ja `height`; näyttää viimeisen arvon, nuolinäppäimet siirtyvät pisteestä toiseen. |
+| `scatter` | *(extra)* Pisteet tai kuplat. Luokat ovat pisteitä, ensimmäinen sarja on x, toinen y, valinnainen kolmas kuplan koko. |
+| `hist` | *(extra)* Ensimmäisen sarjan raaka-arvojen histogrammi; `bins` tai `binWidth`, muuten automaattinen. Taulukkonäkymä näyttää luokat. |
+| `gauge` | *(extra)* Yksi mittari luokkaa kohti ensimmäisestä sarjasta, `min` ja `max`, valinnainen `bands: [{ to, label }]` kuvioituina vyöhykkeinä; vyöhykkeen nimi kirjoitetaan luvun alle. |
+| `heat` | *(extra)* Ruudukko luokista (rivit) ja sarjoista (sarakkeet), solun väri arvosta, luku jokaisessa solussa. Tekstin väri valitaan niin, että se säilyttää 4,5:1 solua vasten. |
+| `radar` | *(extra)* 3–8 akselia (luokkaa) ja enintään 3 sarjaa, arvot pisteissä. Useampi akseli tai sarja hylätään virheellä: sen jälkeen tutkakaavio ei ole luettava, käytä pylväitä. |
 
-`bars`illa ja `lines`illa on kaavion ja taulukon välinen vaihtokytkin, sarjoja piilottava selite ja lukema kaavion alla.
+`values` `series`in ja `categories`in sijaan on oikotie yhdelle sarjalle (`hist`, `spark`); `value` on oikotie yhdelle `gauge`lle. Jokaisella kaaviotyypillä paitsi `tiles`, `table` ja `spark` on kaavion ja taulukon välinen vaihtokytkin; sarjatyypeillä on sarjoja piilottava selite; kaikilla on lukema kaavion alla.
 
 ## Asetukset
 
 | Asetus | Oletus | |
 |---|---|---|
-| `type` | | `bars`, `lines`, `tiles` tai `table` |
+| `type` | | Jokin yllä olevista tyypeistä |
 | `title` | | Kaavion otsikko, myös saavutettava nimi |
 | `desc` | | Lyhyt kuvaus otsikon alla |
 | `categories` | | `[{ label, note }]`, `note` näytetään lukemassa ja taulukossa |
@@ -59,7 +72,11 @@ auto();
 | `source` | | Alatunnisteteksti kaavion alla |
 | `legend` | `true` | `false` piilottaa selitteen |
 | `zero` | `false` | Viivat: sisällytä 0 arvoakseliin |
-| `labels` | englanti | `{ chart, table, view, na, hint, keys }`, omat sanamuotosi |
+| `stacked` | `false` | Alue: pinoa sarjat |
+| `maxSlices`, `other`, `center` | `6`, `true`, `'sum'` | Ympyrä ja rengas, katso yllä |
+| `bins`, `binWidth` | automaattinen | Histogrammi |
+| `min`, `max`, `bands` | `0`, `100` | Mittari |
+| `labels` | englanti | `{ chart, table, view, na, hint, keys, other, sum, mean, share, count, range, size }`, omat sanamuotosi |
 | `lang` | sivun kieli | Lukujen muoto, `Intl.NumberFormat`in kautta |
 | `style` | `house` | `house`, `gauge`, `plain` tai `genre` |
 | `theme` | automaattinen | `light` tai `dark` pakottamaan toinen |
@@ -113,7 +130,7 @@ Värit ovat CSS-mukautettuja ominaisuuksia (custom properties) elementillä `.pc
 |---|---|
 | `--pc-bg`, `--pc-fg`, `--pc-mut` | Tausta, teksti, toissijainen teksti |
 | `--pc-grid`, `--pc-sep` | Ruudukon viivat, erottimet |
-| `--pc-0` – `--pc-3` | Sarjojen värit |
+| `--pc-0` – `--pc-5` | Sarjojen ja sektorien värit; `--pc-5` on myös "Muut"-ryhmän väri |
 | `--pc-good`, `--pc-bad` | Laatan reuna paremmalle ja huonommalle |
 | `--pc-cur` | Valitun merkin ääriviiva |
 | `--pc-font`, `--pc-r` | Fontti ja kulmien pyöristys |
@@ -122,18 +139,18 @@ Värit ovat CSS-mukautettuja ominaisuuksia (custom properties) elementillä `.pc
 
 ## Saavutettavuus
 
-- Kuva on `img`, jolla on nimi; sen alla on näppäimistöalue: Tab pääsee kaavioon, nuolinäppäimet siirtyvät merkkien välillä, Home ja End hyppäävät, Escape tyhjentää valinnan. Valittu merkki saa ääriviivan ja luetaan ääneen `aria-live`-alueella.
-- Jokaisella kaaviolla on taulukkonäkymä, jossa on oikeat otsikot. Sarjat erottuvat kuviolla (pylväät) ja muodolla (viivat), ei vain värillä; parempi ja huonompi laatoissa merkillä ja sanalla.
+- Kuva on `img`, jolla on nimi; sen alla on näppäimistöalue: Tab pääsee kaavioon, nuolinäppäimet siirtyvät merkkien (sektorit, pisteet, solut, mittarit, luokat) välillä, Home ja End hyppäävät, Escape tyhjentää valinnan. Valittu merkki saa ääriviivan ja luetaan ääneen `aria-live`-alueella.
+- Jokaisella kaaviolla on taulukkonäkymä, jossa on oikeat otsikot. Sarjat ja sektorit erottuvat kuviolla (pylväät, alueet, ympyrät) ja muodolla (viivat, pisteet), ei vain värillä; lämpökartan solut kantavat lukunsa, mittarin vyöhykkeet nimensä; parempi ja huonompi laatoissa merkillä ja sanalla.
 - Kaikki teksti on vähintään 13 px ja kontrasti vähintään 4,5:1; merkeillä vähintään 3:1. Testisarja tarkistaa kaikki neljä tyyliä vaaleana ja tummana.
 - Vähennetyllä liikkeellä (järjestelmäasetus tai `motion: 'off'`) pylväät ja viivat piirretään heti, eivätkä luvut laske ylöspäin.
 
 ## Suorituskyky
 
-Noin 23 KB skriptiä ja 8 KB CSS:ää, yhdessä noin 10 KB gzip-pakattuna, ilman riippuvuuksia. Kaaviot piirretään uudelleen vain leveyden muuttuessa; animaatio käyttää CSS:ää ja alkaa, kun kaavio vierittyy näkyviin.
+Ydin on noin 37 KB skriptiä ja 12 KB CSS:ää, yhdessä 14,7 KB gzip-pakattuna; lisätyypit lisäävät 5,6 KB gzip-pakattuna. Ei riippuvuuksia. Kaaviot piirretään uudelleen vain leveyden muuttuessa; animaatio käyttää CSS:ää ja alkaa, kun kaavio vierittyy näkyviin.
 
 ## Testit
 
-`python3 tools/build.py` rakentaa kolme tiedostoa hakemistosta `src/`. `python3 tests/browser.py` avaa `demo.html`:n näkymättömässä Chromiumissa (tarvitsee Python-paketin `websockets`), tarkistaa kontrastin, fonttikoon, näppäimistön, taulukkonäkymän ja vähennetyn liikkeen, ja `--photos <folder>` tallentaa kuvakaappaukset vaaleana, tummana ja vähennetyllä liikkeellä.
+`python3 tools/build.py` rakentaa viisi tiedostoa hakemistosta `src/`. `python3 tests/browser.py` avaa `demo.html`:n näkymättömässä Chromiumissa (tarvitsee Python-paketin `websockets`), tarkistaa kontrastin, fonttikoon, näppäimistön, taulukkonäkymän ja vähennetyn liikkeen jokaiselle tyypille, kaikki kolme tietolähdettä ja kaavion ulkopuolelle ulottuvan tekstin, ja `--photos <folder>` tallentaa kuvakaappaukset vaaleana, tummana ja vähennetyllä liikkeellä.
 
 ## Käännökset
 

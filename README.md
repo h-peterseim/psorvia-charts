@@ -1,12 +1,12 @@
 # PSOrvia Charts
 
-[![PSOrvia Charts](docs/preview.webp)](https://h-peterseim.github.io/psorvia-charts/demo.html)
-
 **Animated, accessible charts for your website**
+
+PSOrvia · [psorvia.io](https://psorvia.io)
 
 ### ▶ [Live demo](https://h-peterseim.github.io/psorvia-charts/demo.html)
 
-Bars around a baseline, grouped bars, lines, key-figure tiles and a table view. Plain JavaScript and CSS without dependencies: the values sit next to the marks, every chart works with the keyboard, and with reduced motion nothing moves.
+Bars, lines, pie and ring, stacked and 100 % bars, areas, scatter and bubbles, histogram, sparkline, gauge, heatmap, radar, key-figure tiles and a table view. Plain JavaScript and CSS without dependencies: the values sit next to the marks, every chart works with the keyboard, and with reduced motion nothing moves.
 
 ## Usage
 
@@ -26,9 +26,12 @@ PsoCharts.create(document.getElementById('speed'), {
 ```html
 <script type="module">
 import { create, auto } from './psorvia-charts.esm.js';
+import './psorvia-charts.extra.esm.js'; // only for scatter, hist, gauge, heat, radar
 auto();
 </script>
 ```
+
+The core covers bars, lines, area, pie, ring, stacked and 100 % bars, tiles, sparkline and table. Scatter, histogram, gauge, heatmap and radar live in a second file, `psorvia-charts.extra.js` (classic script, load it after the main script) or `psorvia-charts.extra.esm.js` (module). Without it those types report a clear error and nothing else changes.
 
 ## Chart types
 
@@ -36,16 +39,26 @@ auto();
 |---|---|
 | `bars` | One bar per value, growing from a baseline (`baseline: 1` splits faster from slower). Several series give grouped bars. |
 | `lines` | One line per series across the categories, labelled at the end of the line. |
-| `tiles` | Key-figure tiles with a number that counts up, a mark (▲ ▼ =) and a short text. |
+| `area` | Filled lines from zero; `stacked: true` stacks the series (negative values count as 0). |
+| `stacked` | One bar per category, the series stacked end to end; value in each segment, total at the end. |
+| `percent` | The same as 100 % bars; each segment shows its share of the category. |
+| `pie`, `donut` | One series, one slice per category, label with value and share on a leader line (on narrow screens in a list below). From 7 slices on, the smallest are merged into "Other" (`maxSlices`, default 6; `other: false` keeps all). The ring shows the total in the middle (`center: 'mean'` for the average, `false` for nothing). |
+| `tiles` | Key-figure tiles with a number that counts up, a mark (▲ ▼ =) and a short text. An item may carry `spark: [values]` for a small line. |
 | `table` | A plain table. |
+| `spark` | A small line for running text and tiles: `values`, optional `width` and `height`; shows the last value, arrow keys step through the points. |
+| `scatter` | *(extra)* Points or bubbles. Categories are the points, the first series is x, the second y, an optional third the bubble size. |
+| `hist` | *(extra)* Histogram of the raw values of the first series; `bins` or `binWidth`, otherwise automatic. The table view shows the classes. |
+| `gauge` | *(extra)* One dial per category from the first series, `min` and `max`, optional `bands: [{ to, label }]` drawn as patterned zones; the zone name is written under the number. |
+| `heat` | *(extra)* Grid of categories (rows) and series (columns), cell colour from the value, the number in every cell. The text colour is chosen so that it keeps 4.5:1 against the cell. |
+| `radar` | *(extra)* 3 to 8 axes (categories) and at most 3 series, values at the points. More axes or series are refused with an error: beyond that a radar chart is not readable, use bars. |
 
-`bars` and `lines` have a switch between chart and table, a legend that hides series, and a readout below the chart.
+`values` instead of `series` and `categories` is a shortcut for a single series (`hist`, `spark`); `value` is a shortcut for one `gauge`. Every chart type except `tiles`, `table` and `spark` has a switch between chart and table; series types have a legend that hides series; all have a readout below the chart.
 
 ## Options
 
 | Option | Default | |
 |---|---|---|
-| `type` | | `bars`, `lines`, `tiles` or `table` |
+| `type` | | One of the types above |
 | `title` | | Chart title, also the accessible name |
 | `desc` | | Short description under the title |
 | `categories` | | `[{ label, note }]`, `note` is shown in the readout and in the table |
@@ -59,7 +72,11 @@ auto();
 | `source` | | Footer text under the chart |
 | `legend` | `true` | `false` hides the legend |
 | `zero` | `false` | Lines: include 0 on the value axis |
-| `labels` | English | `{ chart, table, view, na, hint, keys }`, your own wording |
+| `stacked` | `false` | Area: stack the series |
+| `maxSlices`, `other`, `center` | `6`, `true`, `'sum'` | Pie and ring, see above |
+| `bins`, `binWidth` | automatic | Histogram |
+| `min`, `max`, `bands` | `0`, `100` | Gauge |
+| `labels` | English | `{ chart, table, view, na, hint, keys, other, sum, mean, share, count, range, size }`, your own wording |
 | `lang` | page language | Number format, via `Intl.NumberFormat` |
 | `style` | `house` | `house`, `gauge`, `plain` or `genre` |
 | `theme` | automatic | `light` or `dark` to force one |
@@ -113,7 +130,7 @@ The colors are CSS custom properties on `.pc`, for light and dark (system settin
 |---|---|
 | `--pc-bg`, `--pc-fg`, `--pc-mut` | Background, text, secondary text |
 | `--pc-grid`, `--pc-sep` | Grid lines, separators |
-| `--pc-0` to `--pc-3` | Series colors |
+| `--pc-0` to `--pc-5` | Series and slice colors; `--pc-5` is also the colour of "Other" |
 | `--pc-good`, `--pc-bad` | Tile edge for better and worse |
 | `--pc-cur` | Outline of the selected mark |
 | `--pc-font`, `--pc-r` | Font and corner radius |
@@ -122,18 +139,18 @@ The colors are CSS custom properties on `.pc`, for light and dark (system settin
 
 ## Accessibility
 
-- The picture is an `img` with a label; below it sits a keyboard area: Tab reaches the chart, the arrow keys move between marks, Home and End jump, Escape clears. The selected mark is outlined and read out in an `aria-live` region.
-- Every chart has a table view with proper headers. Series differ by pattern (bars) and shape (lines), not only by color; better and worse on tiles by mark and word.
+- The picture is an `img` with a label; below it sits a keyboard area: Tab reaches the chart, the arrow keys move between marks (slices, points, cells, dials, classes), Home and End jump, Escape clears. The selected mark is outlined and read out in an `aria-live` region.
+- Every chart has a table view with proper headers. Series and slices differ by pattern (bars, areas, pies) and shape (lines, points), not only by color; heatmap cells carry their number, gauge zones their name; better and worse on tiles by mark and word.
 - All text is at least 13 px and has at least 4.5:1 contrast; marks have at least 3:1. The test suite checks all four styles in light and dark.
 - With reduced motion (system setting or `motion: 'off'`) bars and lines are drawn at once and the numbers do not count up.
 
 ## Performance
 
-About 23 KB of script and 8 KB of CSS, about 10 KB gzipped together, without dependencies. Charts redraw on width change only; the animation uses CSS and starts when the chart scrolls into view.
+The core is about 37 KB of script and 12 KB of CSS, 14.7 KB gzipped together; the extra types add 5.6 KB gzipped. No dependencies. Charts redraw on width change only; the animation uses CSS and starts when the chart scrolls into view.
 
 ## Tests
 
-`python3 tools/build.py` builds the three files from `src/`. `python3 tests/browser.py` opens `demo.html` in headless Chromium (needs the Python package `websockets`), checks contrast, font size, keyboard, table view and reduced motion, and `--photos <folder>` saves screenshots in light, dark and reduced motion.
+`python3 tools/build.py` builds the five files from `src/`. `python3 tests/browser.py` opens `demo.html` in headless Chromium (needs the Python package `websockets`), checks contrast, font size, keyboard, table view and reduced motion for every type, all three data sources, text that leaves the chart, and `--photos <folder>` saves screenshots in light, dark and reduced motion.
 
 ## Translations
 

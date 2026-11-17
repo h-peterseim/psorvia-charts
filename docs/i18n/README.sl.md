@@ -1,12 +1,12 @@
 # PSOrvia Charts
 
-[![PSOrvia Charts](../preview.webp)](https://h-peterseim.github.io/psorvia-charts/demo.html)
-
 **Animirani in dostopni grafikoni za vašo spletno stran**
+
+PSOrvia · [psorvia.io](https://psorvia.io)
 
 ### ▶ [Predstavitev v živo](https://h-peterseim.github.io/psorvia-charts/demo.html)
 
-Stolpci okoli izhodiščne črte, združeni stolpci, črte, ploščice s ključnimi številkami in tabelarični pogled. Čisti JavaScript in CSS brez odvisnosti: vrednosti so ob oznakah, vsak grafikon deluje s tipkovnico, pri zmanjšanem gibanju pa se nič ne premika.
+Stolpci, črte, tortni in obročni grafikoni, naloženi in 100-odstotni stolpci, ploskve, točkovni in mehurčkasti grafikoni, histogram, sparkline, merilnik, toplotni zemljevid, radar, ploščice s ključnimi številkami in tabelarični pogled. Čisti JavaScript in CSS brez odvisnosti: vrednosti so ob oznakah, vsak grafikon deluje s tipkovnico, pri zmanjšanem gibanju pa se nič ne premika.
 
 ## Uporaba
 
@@ -26,8 +26,11 @@ PsoCharts.create(document.getElementById('speed'), {
 ```html
 <script type="module">
 import { create, auto } from './psorvia-charts.esm.js';
+import './psorvia-charts.extra.esm.js'; // samo za scatter, hist, gauge, heat, radar
 auto();
 </script>
+
+Jedro obsega stolpce, črte, ploskev, tortni grafikon, obroč, naložene in 100-odstotne stolpce, ploščice, sparkline in tabelo. Točkovni grafikon, histogram, merilnik, toplotni zemljevid in radar so v drugi datoteki, `psorvia-charts.extra.js` (klasičen skript, naložite ga za glavnim skriptom) ali `psorvia-charts.extra.esm.js` (modul). Brez nje ti tipi javijo jasno napako, vse drugo pa ostane enako.
 ```
 
 ## Vrste grafikonov
@@ -36,16 +39,26 @@ auto();
 |---|---|
 | `bars` | En stolpec na vrednost, ki raste od izhodiščne črte (`baseline: 1` loči hitrejše od počasnejšega). Več serij da združene stolpce. |
 | `lines` | Ena črta na serijo čez kategorije, z oznako na koncu črte. |
-| `tiles` | Ploščice s ključnimi številkami: število, ki šteje navzgor, oznaka (▲ ▼ =) in kratko besedilo. |
+| `area` | Zapolnjene črte od ničle; `stacked: true` naloži serije eno na drugo (negativne vrednosti štejejo kot 0). |
+| `stacked` | En stolpec na kategorijo, serije zaporedoma; vrednost v vsakem odseku, vsota na koncu. |
+| `percent` | Isto kot 100-odstotni stolpci; vsak odsek kaže svoj delež v kategoriji. |
+| `pie`, `donut` | Ena serija, en izsek na kategorijo, oznaka z vrednostjo in deležem na vodilni črti (na ozkih zaslonih na seznamu pod grafikonom). Od 7 izsekov naprej se najmanjši združijo v „Drugo“ (`maxSlices`, privzeto 6; `other: false` obdrži vse). Obroč kaže vsoto v sredini (`center: 'mean'` za povprečje, `false` za nič). |
+| `tiles` | Ploščice s ključnimi številkami: število, ki šteje navzgor, oznaka (▲ ▼ =) in kratko besedilo. Element lahko nosi `spark: [values]` za majhno črto. |
 | `table` | Navadna tabela. |
+| `spark` | Majhna črta za tekoče besedilo in ploščice: `values`, po želji `width` in `height`; kaže zadnjo vrednost, puščice vodijo skozi točke. |
+| `scatter` | *(extra)* Točke ali mehurčki. Kategorije so točke, prva serija je x, druga y, neobvezna tretja je velikost mehurčka. |
+| `hist` | *(extra)* Histogram surovih vrednosti prve serije; `bins` ali `binWidth`, sicer samodejno. Tabelarični pogled kaže razrede. |
+| `gauge` | *(extra)* En merilnik na kategorijo iz prve serije, `min` in `max`, po želji `bands: [{ to, label }]`, narisani kot vzorčasta območja; ime območja je napisano pod številom. |
+| `heat` | *(extra)* Mreža kategorij (vrstice) in serij (stolpci), barva celice po vrednosti, število v vsaki celici. Barva besedila je izbrana tako, da proti celici ohrani 4,5:1. |
+| `radar` | *(extra)* 3 do 8 osi (kategorij) in največ 3 serije, vrednosti pri točkah. Več osi ali serij je zavrnjenih z napako: čez to radarski grafikon ni več berljiv, uporabite stolpce. |
 
-`bars` in `lines` imata preklop med grafikonom in tabelo, legendo, ki skrije serije, in polje za odčitek pod grafikonom.
+`values` namesto `series` in `categories` je bližnjica za eno samo serijo (`hist`, `spark`); `value` je bližnjica za en sam `gauge`. Vsak tip grafikona razen `tiles`, `table` in `spark` ima preklop med grafikonom in tabelo; tipi s serijami imajo legendo, ki skrije serije; vsi imajo polje za odčitek pod grafikonom.
 
 ## Možnosti
 
 | Možnost | Privzeto | |
 |---|---|---|
-| `type` | | `bars`, `lines`, `tiles` ali `table` |
+| `type` | | Eden od zgornjih tipov |
 | `title` | | Naslov grafikona, tudi dostopno ime |
 | `desc` | | Kratek opis pod naslovom |
 | `categories` | | `[{ label, note }]`, `note` se prikaže v polju za odčitek in v tabeli |
@@ -59,7 +72,11 @@ auto();
 | `source` | | Besedilo noge pod grafikonom |
 | `legend` | `true` | `false` skrije legendo |
 | `zero` | `false` | Črte: vključi 0 na osi vrednosti |
-| `labels` | angleščina | `{ chart, table, view, na, hint, keys }`, vaše lastne formulacije |
+| `stacked` | `false` | Ploskev: naloži serije eno na drugo |
+| `maxSlices`, `other`, `center` | `6`, `true`, `'sum'` | Tortni grafikon in obroč, glej zgoraj |
+| `bins`, `binWidth` | samodejno | Histogram |
+| `min`, `max`, `bands` | `0`, `100` | Merilnik (`gauge`) |
+| `labels` | angleščina | `{ chart, table, view, na, hint, keys, other, sum, mean, share, count, range, size }`, vaše lastne formulacije |
 | `lang` | jezik strani | Oblika števil prek `Intl.NumberFormat` |
 | `style` | `house` | `house`, `gauge`, `plain` ali `genre` |
 | `theme` | samodejno | `light` ali `dark` za izsiljeno izbiro |
@@ -113,7 +130,7 @@ Barve so lastne lastnosti CSS na `.pc`, za svetlo in temno temo (nastavitev sist
 |---|---|
 | `--pc-bg`, `--pc-fg`, `--pc-mut` | Ozadje, besedilo, sekundarno besedilo |
 | `--pc-grid`, `--pc-sep` | Črte mreže, ločilnice |
-| `--pc-0` do `--pc-3` | Barve serij |
+| `--pc-0` do `--pc-5` | Barve serij in izsekov; `--pc-5` je hkrati barva za „Drugo“ |
 | `--pc-good`, `--pc-bad` | Rob ploščice za boljše in slabše |
 | `--pc-cur` | Obroba izbrane oznake |
 | `--pc-font`, `--pc-r` | Pisava in polmer vogalov |
@@ -122,18 +139,18 @@ Barve so lastne lastnosti CSS na `.pc`, za svetlo in temno temo (nastavitev sist
 
 ## Dostopnost
 
-- Slika je `img` z oznako; pod njo je območje za tipkovnico: Tab doseže grafikon, puščice premikajo med oznakami, Home in End skočita, Escape počisti izbiro. Izbrana oznaka je obrobljena in prebrana v območju `aria-live`.
-- Vsak grafikon ima tabelarični pogled s pravilnimi glavami. Serije se razlikujejo po vzorcu (stolpci) in obliki (črte), ne le po barvi; boljše in slabše pri ploščicah po oznaki in besedi.
+- Slika je `img` z oznako; pod njo je območje za tipkovnico: Tab doseže grafikon, puščice premikajo med oznakami (izseki, točke, celice, merilniki, razredi), Home in End skočita, Escape počisti izbiro. Izbrana oznaka je obrobljena in prebrana v območju `aria-live`.
+- Vsak grafikon ima tabelarični pogled s pravilnimi glavami. Serije in izseki se razlikujejo po vzorcu (stolpci, ploskve, torte) in obliki (črte, točke), ne le po barvi; celice toplotnega zemljevida nosijo svoje število, območja merilnika svoje ime; boljše in slabše pri ploščicah po oznaki in besedi.
 - Vse besedilo je veliko vsaj 13 px in ima kontrast vsaj 4,5:1; oznake imajo vsaj 3:1. Nabor testov preveri vseh štirih slogov v svetli in temni temi.
 - Pri zmanjšanem gibanju (nastavitev sistema ali `motion: 'off'`) se stolpci in črte narišejo naenkrat, številke pa ne štejejo navzgor.
 
 ## Zmogljivost
 
-Približno 23 KB skripta in 8 KB CSS, skupaj približno 10 KB po gzip, brez odvisnosti. Grafikoni se prerišejo le ob spremembi širine; animacija uporablja CSS in se začne, ko grafikon zdrsne v vidno polje.
+Jedro ima približno 37 KB skripta in 12 KB CSS, skupaj 14,7 KB po gzip; dodatni tipi dodajo 5,6 KB po gzip. Brez odvisnosti. Grafikoni se prerišejo le ob spremembi širine; animacija uporablja CSS in se začne, ko grafikon zdrsne v vidno polje.
 
 ## Testi
 
-`python3 tools/build.py` zgradi tri datoteke iz `src/`. `python3 tests/browser.py` odpre `demo.html` v headless Chromium (potrebuje paket Pythona `websockets`), preveri kontrast, velikost pisave, tipkovnico, tabelarični pogled in zmanjšano gibanje, `--photos <folder>` pa shrani posnetke zaslona v svetli in temni temi ter pri zmanjšanem gibanju.
+`python3 tools/build.py` zgradi pet datotek iz `src/`. `python3 tests/browser.py` odpre `demo.html` v headless Chromium (potrebuje paket Pythona `websockets`), preveri kontrast, velikost pisave, tipkovnico, tabelarični pogled in zmanjšano gibanje za vsak tip, vse tri vire podatkov, besedilo, ki štrli iz grafikona, `--photos <folder>` pa shrani posnetke zaslona v svetli in temni temi ter pri zmanjšanem gibanju.
 
 ## Prevodi
 

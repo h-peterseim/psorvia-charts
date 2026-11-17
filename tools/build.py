@@ -20,10 +20,16 @@ def strip_css(s):
 js = open(f'{R}/src/psorvia-charts.src.js').read()
 esm = strip_js(js)
 classic = re.sub(r'\bexport (function|const)\b', r'\1', esm)
-exports = 'create,auto,read,fromLd,fromTable,version'
+exports = 'create,auto,read,fromLd,fromTable,version,kit'
 classic = '(function(g){\n' + classic.replace('\n', '\n', 1) + f'g.PsoCharts={{{exports.replace(",", ",")}}};\n}})(typeof window!=="undefined"?window:this);\n'
 open(f'{R}/psorvia-charts.esm.js', 'w').write(esm)
 open(f'{R}/psorvia-charts.js', 'w').write(classic)
 open(f'{R}/psorvia-charts.css', 'w').write(strip_css(open(f'{R}/src/psorvia-charts.css').read()))
-for f in ('psorvia-charts.esm.js', 'psorvia-charts.js', 'psorvia-charts.css'):
-    b = open(f'{R}/{f}', 'rb').read(); print(f, len(b), 'B', len(gzip.compress(b, 9)), 'B gz')
+xs = strip_js(open(f'{R}/src/psorvia-charts.extra.src.js').read())
+open(f'{R}/psorvia-charts.extra.esm.js', 'w').write(xs.split('\n', 1)[0] + "\nimport { kit } from './psorvia-charts.esm.js';\n" + xs.split('\n', 1)[1])
+open(f'{R}/psorvia-charts.extra.js', 'w').write('(function(g){\n' + xs.split('\n', 1)[0] + '\nconst kit=g.PsoCharts.kit;\n' + xs.split('\n', 1)[1] + '})(typeof window!=="undefined"?window:this);\n')
+tot = 0
+for f in ('psorvia-charts.esm.js', 'psorvia-charts.js', 'psorvia-charts.css', 'psorvia-charts.extra.esm.js', 'psorvia-charts.extra.js'):
+    b = open(f'{R}/{f}', 'rb').read(); g = len(gzip.compress(b, 9)); print(f, len(b), 'B', g, 'B gz')
+    if f in ('psorvia-charts.js', 'psorvia-charts.css'): tot += g
+print('Kern (Skript + CSS) gz:', tot, 'B')

@@ -1,12 +1,12 @@
 # PSOrvia Charts
 
-[![PSOrvia Charts](../preview.webp)](https://h-peterseim.github.io/psorvia-charts/demo.html)
-
 **Animowane, dostępne wykresy dla Twojej strony**
+
+PSOrvia · [psorvia.io](https://psorvia.io)
 
 ### ▶ [Demo na żywo](https://h-peterseim.github.io/psorvia-charts/demo.html)
 
-Słupki wokół linii bazowej, słupki grupowane, linie, kafelki z kluczowymi liczbami i widok tabeli. Czysty JavaScript i CSS bez zależności: wartości stoją obok znaczników, każdy wykres działa z klawiaturą, a przy ograniczonym ruchu nic się nie porusza.
+Słupki, linie, wykresy kołowy i pierścieniowy, słupki skumulowane i 100 %, obszary, wykresy punktowy i bąbelkowy, histogram, sparkline, wskaźnik, mapa cieplna, radar, kafelki z kluczowymi liczbami i widok tabeli. Czysty JavaScript i CSS bez zależności: wartości stoją obok znaczników, każdy wykres działa z klawiaturą, a przy ograniczonym ruchu nic się nie porusza.
 
 ## Użycie
 
@@ -26,9 +26,12 @@ PsoCharts.create(document.getElementById('speed'), {
 ```html
 <script type="module">
 import { create, auto } from './psorvia-charts.esm.js';
+import './psorvia-charts.extra.esm.js'; // tylko dla scatter, hist, gauge, heat, radar
 auto();
 </script>
 ```
+
+Rdzeń obejmuje bars, lines, area, pie, ring, słupki skumulowane i 100 %, kafelki, sparkline i tabelę. Wykres punktowy, histogram, wskaźnik, mapa cieplna i radar są w drugim pliku, `psorvia-charts.extra.js` (zwykły skrypt, załaduj po głównym) lub `psorvia-charts.extra.esm.js` (moduł). Bez niego te typy zgłaszają wyraźny błąd, a nic innego się nie zmienia.
 
 ## Typy wykresów
 
@@ -36,16 +39,26 @@ auto();
 |---|---|
 | `bars` | Jeden słupek na wartość, rosnący od linii bazowej (`baseline: 1` oddziela szybsze od wolniejszych). Kilka serii daje słupki grupowane. |
 | `lines` | Jedna linia na serię przez kategorie, z etykietą na końcu linii. |
-| `tiles` | Kafelki z kluczowymi liczbami: liczba, która narasta, znacznik (▲ ▼ =) i krótki tekst. |
+| `area` | Wypełnione linie od zera; `stacked: true` układa serie w stos (wartości ujemne liczą się jako 0). |
+| `stacked` | Jeden słupek na kategorię, serie ułożone jedna na drugiej; wartość w każdym segmencie, suma na końcu. |
+| `percent` | To samo co słupki 100 %; każdy segment pokazuje swój udział w kategorii. |
+| `pie`, `donut` | Jedna seria, jeden wycinek na kategorię, etykieta z wartością i udziałem na linii odniesienia (na wąskich ekranach na liście poniżej). Od 7 wycinków najmniejsze są łączone w „Inne” (`maxSlices`, domyślnie 6; `other: false` zachowuje wszystkie). Pierścień pokazuje sumę pośrodku (`center: 'mean'` dla średniej, `false` dla niczego). |
+| `tiles` | Kafelki z kluczowymi liczbami: liczba, która narasta, znacznik (▲ ▼ =) i krótki tekst. Element może zawierać `spark: [values]` dla małej linii. |
 | `table` | Zwykła tabela. |
+| `spark` | Mała linia do tekstu i kafelków: `values`, opcjonalnie `width` i `height`; pokazuje ostatnią wartość, klawisze strzałek przechodzą po punktach. |
+| `scatter` | *(extra)* Punkty lub bąbelki. Kategorie to punkty, pierwsza seria to x, druga y, opcjonalna trzecia to rozmiar bąbelka. |
+| `hist` | *(extra)* Histogram surowych wartości pierwszej serii; `bins` lub `binWidth`, w przeciwnym razie automatycznie. Widok tabeli pokazuje klasy. |
+| `gauge` | *(extra)* Jeden wskaźnik na kategorię z pierwszej serii, `min` i `max`, opcjonalne `bands: [{ to, label }]` rysowane jako strefy ze wzorem; nazwa strefy jest zapisana pod liczbą. |
+| `heat` | *(extra)* Siatka kategorii (wiersze) i serii (kolumny), kolor komórki z wartości, liczba w każdej komórce. Kolor tekstu dobiera się tak, by zachował 4,5:1 względem komórki. |
+| `radar` | *(extra)* 3 do 8 osi (kategorie) i najwyżej 3 serie, wartości przy punktach. Więcej osi lub serii jest odrzucane z błędem: dalej wykres radarowy jest nieczytelny, użyj słupków. |
 
-`bars` i `lines` mają przełącznik między wykresem a tabelą, legendę ukrywającą serie i pole odczytu pod wykresem.
+`values` zamiast `series` i `categories` to skrót dla jednej serii (`hist`, `spark`); `value` to skrót dla jednego `gauge`. Każdy typ wykresu poza `tiles`, `table` i `spark` ma przełącznik między wykresem a tabelą; typy seryjne mają legendę ukrywającą serie; wszystkie mają pole odczytu pod wykresem.
 
 ## Opcje
 
 | Opcja | Domyślnie | |
 |---|---|---|
-| `type` | | `bars`, `lines`, `tiles` lub `table` |
+| `type` | | Jeden z powyższych typów |
 | `title` | | Tytuł wykresu, także nazwa dla technologii asystujących |
 | `desc` | | Krótki opis pod tytułem |
 | `categories` | | `[{ label, note }]`, `note` jest pokazywana w polu odczytu i w tabeli |
@@ -59,7 +72,11 @@ auto();
 | `source` | | Tekst stopki pod wykresem |
 | `legend` | `true` | `false` ukrywa legendę |
 | `zero` | `false` | Linie: uwzględnia 0 na osi wartości |
-| `labels` | angielski | `{ chart, table, view, na, hint, keys }`, własne sformułowania |
+| `stacked` | `false` | Obszar: układa serie w stos |
+| `maxSlices`, `other`, `center` | `6`, `true`, `'sum'` | Kołowy i pierścieniowy, zob. wyżej |
+| `bins`, `binWidth` | automatycznie | Histogram |
+| `min`, `max`, `bands` | `0`, `100` | Wskaźnik |
+| `labels` | angielski | `{ chart, table, view, na, hint, keys, other, sum, mean, share, count, range, size }`, własne sformułowania |
 | `lang` | język strony | Format liczb, przez `Intl.NumberFormat` |
 | `style` | `house` | `house`, `gauge`, `plain` lub `genre` |
 | `theme` | automatycznie | `light` lub `dark`, aby wymusić jeden |
@@ -113,7 +130,7 @@ Kolory to właściwości niestandardowe CSS na `.pc`, dla jasnego i ciemnego mot
 |---|---|
 | `--pc-bg`, `--pc-fg`, `--pc-mut` | Tło, tekst, tekst drugoplanowy |
 | `--pc-grid`, `--pc-sep` | Linie siatki, separatory |
-| `--pc-0` do `--pc-3` | Kolory serii |
+| `--pc-0` do `--pc-5` | Kolory serii i wycinków; `--pc-5` to także kolor „Inne” |
 | `--pc-good`, `--pc-bad` | Krawędź kafelka dla lepszego i gorszego |
 | `--pc-cur` | Obrys wybranego znacznika |
 | `--pc-font`, `--pc-r` | Czcionka i promień zaokrąglenia |
@@ -122,18 +139,18 @@ Kolory to właściwości niestandardowe CSS na `.pc`, dla jasnego i ciemnego mot
 
 ## Dostępność
 
-- Obraz to `img` z etykietą; pod nim jest obszar klawiatury: Tab dociera do wykresu, klawisze strzałek przechodzą między znacznikami, Home i End skaczą, Escape czyści wybór. Wybrany znacznik jest obrysowany i odczytywany w regionie `aria-live`.
-- Każdy wykres ma widok tabeli z poprawnymi nagłówkami. Serie różnią się wzorem (słupki) i kształtem (linie), nie tylko kolorem; lepsze i gorsze na kafelkach rozróżnia znacznik i słowo.
+- Obraz to `img` z etykietą; pod nim jest obszar klawiatury: Tab dociera do wykresu, klawisze strzałek przechodzą między znacznikami (wycinkami, punktami, komórkami, wskaźnikami, klasami), Home i End skaczą, Escape czyści wybór. Wybrany znacznik jest obrysowany i odczytywany w regionie `aria-live`.
+- Każdy wykres ma widok tabeli z poprawnymi nagłówkami. Serie i wycinki różnią się wzorem (słupki, obszary, kołowe) i kształtem (linie, punkty), nie tylko kolorem; komórki mapy cieplnej niosą swoją liczbę, strefy wskaźnika swoją nazwę; lepsze i gorsze na kafelkach rozróżnia znacznik i słowo.
 - Cały tekst ma co najmniej 13 px i kontrast co najmniej 4,5:1; znaczniki mają co najmniej 3:1. Zestaw testów sprawdza wszystkie cztery style w jasnym i ciemnym motywie.
 - Przy ograniczonym ruchu (ustawienie systemu lub `motion: 'off'`) słupki i linie są rysowane od razu, a liczby nie narastają.
 
 ## Wydajność
 
-Około 23 KB skryptu i 8 KB CSS, razem około 10 KB po gzipie, bez zależności. Wykresy są przerysowywane tylko przy zmianie szerokości; animacja używa CSS i startuje, gdy wykres przewinie się do widoku.
+Rdzeń to około 37 KB skryptu i 12 KB CSS, razem 14,7 KB po gzipie; dodatkowe typy dodają 5,6 KB po gzipie. Bez zależności. Wykresy są przerysowywane tylko przy zmianie szerokości; animacja używa CSS i startuje, gdy wykres przewinie się do widoku.
 
 ## Testy
 
-`python3 tools/build.py` buduje trzy pliki z `src/`. `python3 tests/browser.py` otwiera `demo.html` w headless Chromium (wymaga pakietu Pythona `websockets`), sprawdza kontrast, rozmiar czcionki, klawiaturę, widok tabeli i ograniczony ruch, a `--photos <folder>` zapisuje zrzuty ekranu w trybie jasnym, ciemnym i z ograniczonym ruchem.
+`python3 tools/build.py` buduje pięć plików z `src/`. `python3 tests/browser.py` otwiera `demo.html` w headless Chromium (wymaga pakietu Pythona `websockets`), sprawdza kontrast, rozmiar czcionki, klawiaturę, widok tabeli i ograniczony ruch dla każdego typu, wszystkie trzy źródła danych oraz tekst wychodzący poza wykres, a `--photos <folder>` zapisuje zrzuty ekranu w trybie jasnym, ciemnym i z ograniczonym ruchem.
 
 ## Tłumaczenia
 

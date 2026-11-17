@@ -1,12 +1,12 @@
 # PSOrvia Charts
 
-[![PSOrvia Charts](../preview.webp)](https://h-peterseim.github.io/psorvia-charts/demo.html)
-
 **Geanimeerde, toegankelijke grafieken voor je website**
+
+PSOrvia · [psorvia.io](https://psorvia.io)
 
 ### ▶ [Live-demo](https://h-peterseim.github.io/psorvia-charts/demo.html)
 
-Staven rond een basislijn, gegroepeerde staven, lijnen, tegels met kerncijfers en een tabelweergave. Gewoon JavaScript en CSS zonder afhankelijkheden: de waarden staan naast de markeringen, elke grafiek werkt met het toetsenbord en bij beperkte beweging beweegt er niets.
+Staven, lijnen, taart en ring, gestapelde en 100 %-staven, vlakken, spreiding en bellen, histogram, sparkline, meter, heatmap, radar, tegels met kerncijfers en een tabelweergave. Gewoon JavaScript en CSS zonder afhankelijkheden: de waarden staan naast de markeringen, elke grafiek werkt met het toetsenbord en bij beperkte beweging beweegt er niets.
 
 ## Gebruik
 
@@ -26,9 +26,12 @@ PsoCharts.create(document.getElementById('speed'), {
 ```html
 <script type="module">
 import { create, auto } from './psorvia-charts.esm.js';
+import './psorvia-charts.extra.esm.js'; // alleen voor scatter, hist, gauge, heat, radar
 auto();
 </script>
 ```
+
+De kern omvat bars, lines, area, pie, ring, gestapelde en 100 %-staven, tiles, sparkline en table. Spreiding, histogram, meter, heatmap en radar zitten in een tweede bestand, `psorvia-charts.extra.js` (klassiek script, laad het na het hoofdscript) of `psorvia-charts.extra.esm.js` (module). Zonder dat bestand melden die typen een duidelijke fout en verandert er verder niets.
 
 ## Soorten grafieken
 
@@ -36,16 +39,26 @@ auto();
 |---|---|
 | `bars` | Eén staaf per waarde, groeiend vanaf een basislijn (`baseline: 1` scheidt sneller van langzamer). Meerdere reeksen geven gegroepeerde staven. |
 | `lines` | Eén lijn per reeks over de categorieën, met een label aan het einde van de lijn. |
-| `tiles` | Tegels met kerncijfers: een getal dat optelt, een markering (▲ ▼ =) en een korte tekst. |
+| `area` | Gevulde lijnen vanaf nul; `stacked: true` stapelt de reeksen (negatieve waarden tellen als 0). |
+| `stacked` | Eén staaf per categorie, de reeksen achter elkaar gestapeld; waarde in elk segment, totaal aan het einde. |
+| `percent` | Hetzelfde als 100 %-staven; elk segment toont zijn aandeel in de categorie. |
+| `pie`, `donut` | Eén reeks, één punt per categorie, label met waarde en aandeel aan een geleidelijn (op smalle schermen in een lijst eronder). Vanaf 7 punten worden de kleinste samengevoegd tot "Overig" (`maxSlices`, standaard 6; `other: false` behoudt alles). De ring toont het totaal in het midden (`center: 'mean'` voor het gemiddelde, `false` voor niets). |
+| `tiles` | Tegels met kerncijfers: een getal dat optelt, een markering (▲ ▼ =) en een korte tekst. Een item kan `spark: [values]` meegeven voor een kleine lijn. |
 | `table` | Een gewone tabel. |
+| `spark` | Een kleine lijn voor lopende tekst en tegels: `values`, optioneel `width` en `height`; toont de laatste waarde, met de pijltjestoetsen stap je door de punten. |
+| `scatter` | *(extra)* Punten of bellen. De categorieën zijn de punten, de eerste reeks is x, de tweede y, een optionele derde de grootte van de bel. |
+| `hist` | *(extra)* Histogram van de ruwe waarden van de eerste reeks; `bins` of `binWidth`, anders automatisch. De tabelweergave toont de klassen. |
+| `gauge` | *(extra)* Eén meter per categorie uit de eerste reeks, `min` en `max`, optioneel `bands: [{ to, label }]` getekend als zones met patroon; de naam van de zone staat onder het getal. |
+| `heat` | *(extra)* Raster van categorieën (rijen) en reeksen (kolommen), celkleur naar waarde, het getal in elke cel. De tekstkleur wordt zo gekozen dat het contrast met de cel 4,5:1 blijft. |
+| `radar` | *(extra)* 3 tot 8 assen (categorieën) en hoogstens 3 reeksen, waarden bij de punten. Meer assen of reeksen worden met een fout geweigerd: daarboven is een radardiagram niet leesbaar, gebruik staven. |
 
-`bars` en `lines` hebben een schakelaar tussen grafiek en tabel, een legenda waarmee je reeksen verbergt en een uitleesveld onder de grafiek.
+`values` in plaats van `series` en `categories` is een snelkoppeling voor één reeks (`hist`, `spark`); `value` is een snelkoppeling voor één `gauge`. Elk grafiektype behalve `tiles`, `table` en `spark` heeft een schakelaar tussen grafiek en tabel; reekstypen hebben een legenda waarmee je reeksen verbergt; alle hebben een uitleesveld onder de grafiek.
 
 ## Opties
 
 | Optie | Standaard | |
 |---|---|---|
-| `type` | | `bars`, `lines`, `tiles` of `table` |
+| `type` | | Een van de bovenstaande typen |
 | `title` | | Titel van de grafiek, ook de toegankelijke naam |
 | `desc` | | Korte beschrijving onder de titel |
 | `categories` | | `[{ label, note }]`, `note` wordt getoond in het uitleesveld en in de tabel |
@@ -59,7 +72,11 @@ auto();
 | `source` | | Voettekst onder de grafiek |
 | `legend` | `true` | `false` verbergt de legenda |
 | `zero` | `false` | Lijnen: neem 0 op in de waardeas |
-| `labels` | Engels | `{ chart, table, view, na, hint, keys }`, je eigen formulering |
+| `stacked` | `false` | Vlak: de reeksen stapelen |
+| `maxSlices`, `other`, `center` | `6`, `true`, `'sum'` | Taart en ring, zie hierboven |
+| `bins`, `binWidth` | automatisch | Histogram |
+| `min`, `max`, `bands` | `0`, `100` | Meter |
+| `labels` | Engels | `{ chart, table, view, na, hint, keys, other, sum, mean, share, count, range, size }`, je eigen formulering |
 | `lang` | paginataal | Getalnotatie, via `Intl.NumberFormat` |
 | `style` | `house` | `house`, `gauge`, `plain` of `genre` |
 | `theme` | automatisch | `light` of `dark` om er een te forceren |
@@ -113,7 +130,7 @@ De kleuren zijn CSS custom properties op `.pc`, voor licht en donker (systeemins
 |---|---|
 | `--pc-bg`, `--pc-fg`, `--pc-mut` | Achtergrond, tekst, secundaire tekst |
 | `--pc-grid`, `--pc-sep` | Rasterlijnen, scheidingslijnen |
-| `--pc-0` tot `--pc-3` | Reekskleuren |
+| `--pc-0` tot `--pc-5` | Kleuren van reeksen en taartpunten; `--pc-5` is ook de kleur van "Overig" |
 | `--pc-good`, `--pc-bad` | Tegelrand voor beter en slechter |
 | `--pc-cur` | Omlijning van de geselecteerde markering |
 | `--pc-font`, `--pc-r` | Lettertype en hoekradius |
@@ -122,18 +139,18 @@ De kleuren zijn CSS custom properties op `.pc`, voor licht en donker (systeemins
 
 ## Toegankelijkheid
 
-- De afbeelding is een `img` met een label; eronder zit een toetsenbordgebied: met Tab kom je bij de grafiek, de pijltjestoetsen gaan van markering naar markering, Home en End springen, Escape wist de selectie. De geselecteerde markering krijgt een omlijning en wordt voorgelezen in een `aria-live`-gebied.
-- Elke grafiek heeft een tabelweergave met correcte koppen. Reeksen verschillen door patroon (staven) en vorm (lijnen), niet alleen door kleur; beter en slechter bij tegels door markering en woord.
+- De afbeelding is een `img` met een label; eronder zit een toetsenbordgebied: met Tab kom je bij de grafiek, de pijltjestoetsen gaan van markering naar markering (taartpunten, punten, cellen, wijzers, klassen), Home en End springen, Escape wist de selectie. De geselecteerde markering krijgt een omlijning en wordt voorgelezen in een `aria-live`-gebied.
+- Elke grafiek heeft een tabelweergave met correcte koppen. Reeksen en taartpunten verschillen door patroon (staven, vlakken, taarten) en vorm (lijnen, punten), niet alleen door kleur; cellen van de heatmap dragen hun getal, zones van de meter hun naam; beter en slechter bij tegels door markering en woord.
 - Alle tekst is minstens 13 px en heeft een contrast van minstens 4,5:1; markeringen hebben minstens 3:1. De testsuite controleert alle vier de stijlen in licht en donker.
 - Bij beperkte beweging (systeeminstelling of `motion: 'off'`) worden staven en lijnen meteen getekend en tellen de getallen niet op.
 
 ## Prestaties
 
-Ongeveer 23 KB script en 8 KB CSS, samen ongeveer 10 KB gzipped, zonder afhankelijkheden. Grafieken worden alleen opnieuw getekend als de breedte verandert; de animatie gebruikt CSS en start zodra de grafiek in beeld scrolt.
+De kern is ongeveer 37 KB script en 12 KB CSS, samen 14,7 KB gzipped; de extra typen voegen 5,6 KB gzipped toe. Zonder afhankelijkheden. Grafieken worden alleen opnieuw getekend als de breedte verandert; de animatie gebruikt CSS en start zodra de grafiek in beeld scrolt.
 
 ## Tests
 
-`python3 tools/build.py` bouwt de drie bestanden uit `src/`. `python3 tests/browser.py` opent `demo.html` in headless Chromium (vereist het Python-pakket `websockets`), controleert contrast, lettergrootte, toetsenbord, tabelweergave en beperkte beweging, en `--photos <folder>` slaat schermafbeeldingen op in licht, donker en beperkte beweging.
+`python3 tools/build.py` bouwt de vijf bestanden uit `src/`. `python3 tests/browser.py` opent `demo.html` in headless Chromium (vereist het Python-pakket `websockets`), controleert contrast, lettergrootte, toetsenbord, tabelweergave en beperkte beweging voor elk type, alle drie de gegevensbronnen en tekst die buiten de grafiek valt, en `--photos <folder>` slaat schermafbeeldingen op in licht, donker en beperkte beweging.
 
 ## Vertalingen
 

@@ -1,12 +1,12 @@
 # PSOrvia Charts
 
-[![PSOrvia Charts](../preview.webp)](https://h-peterseim.github.io/psorvia-charts/demo.html)
-
 **Animeeritud, ligipääsetavad diagrammid sinu veebilehele**
+
+PSOrvia · [psorvia.io](https://psorvia.io)
 
 ### ▶ [Otsedemo](https://h-peterseim.github.io/psorvia-charts/demo.html)
 
-Tulbad ümber algjoone, rühmitatud tulbad, jooned, võtenumbrite paanid ja tabelivaade. Puhas JavaScript ja CSS ilma sõltuvusteta: väärtused asuvad märkide kõrval, iga diagramm töötab klaviatuuriga ja vähendatud liikumise korral ei liigu miski.
+Tulbad, jooned, sektor- ja rõngasdiagramm, virnastatud ja 100 % tulbad, alad, punkt- ja mulldiagramm, histogramm, sparkline, ketasnäidik, kuumakaart, radar, võtenumbrite paanid ja tabelivaade. Puhas JavaScript ja CSS ilma sõltuvusteta: väärtused asuvad märkide kõrval, iga diagramm töötab klaviatuuriga ja vähendatud liikumise korral ei liigu miski.
 
 ## Kasutamine
 
@@ -26,9 +26,12 @@ PsoCharts.create(document.getElementById('speed'), {
 ```html
 <script type="module">
 import { create, auto } from './psorvia-charts.esm.js';
+import './psorvia-charts.extra.esm.js'; // ainult scatter, hist, gauge, heat, radar jaoks
 auto();
 </script>
 ```
+
+Tuum katab bars, lines, area, pie, ring, virnastatud ja 100 % tulbad, tiles, sparkline ja table. Punktdiagramm, histogramm, ketasnäidik, kuumakaart ja radar asuvad teises failis: `psorvia-charts.extra.js` (klassikaline skript, laadi see pärast põhiskripti) või `psorvia-charts.extra.esm.js` (moodul). Ilma selleta teatavad need tüübid selgest veast ja midagi muud ei muutu.
 
 ## Diagrammitüübid
 
@@ -36,16 +39,26 @@ auto();
 |---|---|
 | `bars` | Ühte tulpa väärtuse kohta, mis kasvab algjoonelt (`baseline: 1` eraldab kiirema aeglasemast). Mitu andmerida annavad rühmitatud tulbad. |
 | `lines` | Ühte joont andmerea kohta üle kategooriate, joone lõpus sildiga. |
-| `tiles` | Võtenumbrite paanid koos ülespoole loendava numbri, märgi (▲ ▼ =) ja lühikese tekstiga. |
+| `area` | Täidetud jooned nullist; `stacked: true` virnastab andmeread (negatiivsed väärtused loetakse nulliks). |
+| `stacked` | Üks tulp kategooria kohta, andmeread virnastatud otsapidi; väärtus igas segmendis, summa lõpus. |
+| `percent` | Sama mis 100 % tulbad; iga segment näitab oma osa kategoorias. |
+| `pie`, `donut` | Üks andmerida, üks sektor kategooria kohta, silt väärtuse ja osakaaluga juhtjoonel (kitsastel ekraanidel allpool loendis). Alates 7 sektorist liidetakse väikseimad rühma „Muud“ (`maxSlices`, vaikimisi 6; `other: false` jätab kõik alles). Rõngas näitab keskel kogusummat (`center: 'mean'` keskmise jaoks, `false` mitte millegi jaoks). |
+| `tiles` | Võtenumbrite paanid koos ülespoole loendava numbri, märgi (▲ ▼ =) ja lühikese tekstiga. Kirje võib kanda `spark: [values]` väikese joone jaoks. |
 | `table` | Lihtne tabel. |
+| `spark` | Väike joon jooksva teksti ja paanide jaoks: `values`, valikuline `width` ja `height`; näitab viimast väärtust, nooleklahvid käivad punktid läbi. |
+| `scatter` | *(extra)* Punktid või mullid. Kategooriad on punktid, esimene andmerida on x, teine y, valikuline kolmas mulli suurus. |
+| `hist` | *(extra)* Esimese andmerea toorväärtuste histogramm; `bins` või `binWidth`, muidu automaatselt. Tabelivaade näitab klasse. |
+| `gauge` | *(extra)* Üks ketasnäidik kategooria kohta esimesest andmereast, `min` ja `max`, valikuline `bands: [{ to, label }]` joonistatakse mustriga tsoonidena; tsooni nimi on kirjutatud numbri alla. |
+| `heat` | *(extra)* Kategooriate (read) ja andmeridade (veerud) ruudustik, lahtri värv väärtuse järgi, number igas lahtris. Teksti värv valitakse nii, et see hoiab lahtri suhtes 4,5:1. |
+| `radar` | *(extra)* 3 kuni 8 telge (kategooriat) ja kuni 3 andmerida, väärtused punktide juures. Rohkem telgi või andmeridu lükatakse veaga tagasi: sellest edasi pole radardiagramm loetav, kasuta tulpasid. |
 
-`bars` ja `lines` on varustatud diagrammi ja tabeli vahelüliti, andmeridu peitva legendi ning diagrammi all oleva näiduga.
+`values` asemel `series` ja `categories` on otsetee ühe andmerea jaoks (`hist`, `spark`); `value` on otsetee ühe `gauge` jaoks. Igal diagrammitüübil peale `tiles`, `table` ja `spark` on diagrammi ja tabeli vahelüliti; andmeridadega tüüpidel on andmeridu peitev legend; kõigil on diagrammi all näit.
 
 ## Valikud
 
 | Valik | Vaikimisi | |
 |---|---|---|
-| `type` | | `bars`, `lines`, `tiles` või `table` |
+| `type` | | Üks ülaltoodud tüüpidest |
 | `title` | | Diagrammi pealkiri, ühtlasi ligipääsetav nimi |
 | `desc` | | Lühikirjeldus pealkirja all |
 | `categories` | | `[{ label, note }]`, `note` kuvatakse näidus ja tabelis |
@@ -59,7 +72,11 @@ auto();
 | `source` | | Jalusetekst diagrammi all |
 | `legend` | `true` | `false` peidab legendi |
 | `zero` | `false` | Jooned: lisa väärtustelje peale 0 |
-| `labels` | inglise keel | `{ chart, table, view, na, hint, keys }`, sinu enda sõnastus |
+| `stacked` | `false` | Ala: virnasta andmeread |
+| `maxSlices`, `other`, `center` | `6`, `true`, `'sum'` | Sektor- ja rõngasdiagramm, vt ülal |
+| `bins`, `binWidth` | automaatne | Histogramm |
+| `min`, `max`, `bands` | `0`, `100` | Ketasnäidik |
+| `labels` | inglise keel | `{ chart, table, view, na, hint, keys, other, sum, mean, share, count, range, size }`, sinu enda sõnastus |
 | `lang` | lehe keel | Arvuvorming, `Intl.NumberFormat` kaudu |
 | `style` | `house` | `house`, `gauge`, `plain` või `genre` |
 | `theme` | automaatne | `light` või `dark` ühe sundimiseks |
@@ -113,7 +130,7 @@ Värvid on CSS-i kohandatud omadused elemendil `.pc`, heleda ja tumeda jaoks (s�
 |---|---|
 | `--pc-bg`, `--pc-fg`, `--pc-mut` | Taust, tekst, teisejärguline tekst |
 | `--pc-grid`, `--pc-sep` | Ruudustiku jooned, eraldajad |
-| `--pc-0` kuni `--pc-3` | Andmeridade värvid |
+| `--pc-0` kuni `--pc-5` | Andmeridade ja sektorite värvid; `--pc-5` on ühtlasi rühma „Muud“ värv |
 | `--pc-good`, `--pc-bad` | Paani serv parema ja halvema jaoks |
 | `--pc-cur` | Valitud märgi kontuur |
 | `--pc-font`, `--pc-r` | Kirjatüüp ja nurkade raadius |
@@ -122,18 +139,18 @@ Värvid on CSS-i kohandatud omadused elemendil `.pc`, heleda ja tumeda jaoks (s�
 
 ## Ligipääsetavus
 
-- Pilt on sildiga `img`; selle all on klaviatuuriala: Tab jõuab diagrammini, nooleklahvid liiguvad märkide vahel, Home ja End hüppavad, Escape tühistab valiku. Valitud märk kontuuritakse ja loetakse ette `aria-live` piirkonnas.
-- Igal diagrammil on tabelivaade korrektsete päistega. Andmeread erinevad mustri (tulbad) ja kuju (jooned) poolest, mitte ainult värvi poolest; parem ja halvem paanidel märgi ja sõna poolest.
+- Pilt on sildiga `img`; selle all on klaviatuuriala: Tab jõuab diagrammini, nooleklahvid liiguvad märkide vahel (sektorid, punktid, lahtrid, ketasnäidikud, klassid), Home ja End hüppavad, Escape tühistab valiku. Valitud märk kontuuritakse ja loetakse ette `aria-live` piirkonnas.
+- Igal diagrammil on tabelivaade korrektsete päistega. Andmeread ja sektorid erinevad mustri (tulbad, alad, sektordiagrammid) ja kuju (jooned, punktid) poolest, mitte ainult värvi poolest; kuumakaardi lahtrid kannavad oma numbrit, ketasnäidiku tsoonid oma nime; parem ja halvem paanidel märgi ja sõna poolest.
 - Kogu tekst on vähemalt 13 px ja kontrast on vähemalt 4,5:1; märkidel vähemalt 3:1. Testikomplekt kontrollib kõiki nelja stiili heledas ja tumedas.
 - Vähendatud liikumise korral (süsteemi seadistus või `motion: 'off'`) joonistatakse tulbad ja jooned korraga ning numbrid ei loenda üles.
 
 ## Jõudlus
 
-Umbes 23 KB skripti ja 8 KB CSS-i, kokku umbes 10 KB gzip-tihendatult, ilma sõltuvusteta. Diagramme joonistatakse uuesti ainult laiuse muutumisel; animatsioon kasutab CSS-i ja algab, kui diagramm kerimisel vaatesse jõuab.
+Tuum on umbes 37 KB skripti ja 12 KB CSS-i, kokku 14,7 KB gzip-tihendatult; lisatüübid lisavad 5,6 KB gzip-tihendatult. Sõltuvusteta. Diagramme joonistatakse uuesti ainult laiuse muutumisel; animatsioon kasutab CSS-i ja algab, kui diagramm kerimisel vaatesse jõuab.
 
 ## Testid
 
-`python3 tools/build.py` ehitab kolm faili kaustast `src/`. `python3 tests/browser.py` avab `demo.html` peata Chromiumis (vajab Pythoni paketti `websockets`), kontrollib kontrasti, kirjasuurust, klaviatuuri, tabelivaadet ja vähendatud liikumist ning `--photos <folder>` salvestab ekraanipildid heledas, tumedas ja vähendatud liikumisega.
+`python3 tools/build.py` ehitab viis faili kaustast `src/`. `python3 tests/browser.py` avab `demo.html` peata Chromiumis (vajab Pythoni paketti `websockets`), kontrollib kontrasti, kirjasuurust, klaviatuuri, tabelivaadet ja vähendatud liikumist iga tüübi puhul, kõiki kolme andmeallikat, diagrammist välja ulatuvat teksti ning `--photos <folder>` salvestab ekraanipildid heledas, tumedas ja vähendatud liikumisega.
 
 ## Tõlked
 

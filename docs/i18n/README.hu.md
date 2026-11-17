@@ -1,12 +1,12 @@
 # PSOrvia Charts
 
-[![PSOrvia Charts](../preview.webp)](https://h-peterseim.github.io/psorvia-charts/demo.html)
-
 **Animált, akadálymentes diagramok a weboldaladhoz**
+
+PSOrvia · [psorvia.io](https://psorvia.io)
 
 ### ▶ [Élő demó](https://h-peterseim.github.io/psorvia-charts/demo.html)
 
-Oszlopok egy alapvonal körül, csoportos oszlopok, vonalak, kulcsszám-csempék és táblázatnézet. Tiszta JavaScript és CSS függőségek nélkül: az értékek a jelölők mellett állnak, minden diagram használható billentyűzettel, és csökkentett mozgásnál semmi sem mozog.
+Oszlopok, vonalak, kör- és gyűrűdiagram, halmozott és 100 %-os oszlopok, területek, pont- és buborékdiagram, hisztogram, sparkline, mérőóra, hőtérkép, radardiagram, kulcsszám-csempék és táblázatnézet. Tiszta JavaScript és CSS függőségek nélkül: az értékek a jelölők mellett állnak, minden diagram használható billentyűzettel, és csökkentett mozgásnál semmi sem mozog.
 
 ## Használat
 
@@ -26,9 +26,12 @@ PsoCharts.create(document.getElementById('speed'), {
 ```html
 <script type="module">
 import { create, auto } from './psorvia-charts.esm.js';
+import './psorvia-charts.extra.esm.js'; // csak scatter, hist, gauge, heat, radar esetén
 auto();
 </script>
 ```
+
+A mag az oszlopokat, vonalakat, területet, kört, gyűrűt, halmozott és 100 %-os oszlopokat, csempéket, sparkline-t és táblázatot fedi le. A scatter, hisztogram, mérőóra, hőtérkép és radar egy második fájlban van, `psorvia-charts.extra.js` (klasszikus szkript, a fő szkript után töltsd be) vagy `psorvia-charts.extra.esm.js` (modul). Nélküle ezek a típusok egyértelmű hibát jeleznek, és semmi más nem változik.
 
 ## Diagramtípusok
 
@@ -36,16 +39,26 @@ auto();
 |---|---|
 | `bars` | Értékenként egy oszlop, amely az alapvonalról indul (a `baseline: 1` elválasztja a gyorsabbat a lassabbtól). Több sorozat csoportos oszlopokat ad. |
 | `lines` | Sorozatonként egy vonal a kategóriákon át, a vonal végén felirattal. |
-| `tiles` | Kulcsszám-csempék felfelé számoló számmal, jelölővel (▲ ▼ =) és rövid szöveggel. |
+| `area` | Kitöltött vonalak nullától; a `stacked: true` egymásra halmozza a sorozatokat (a negatív értékek 0-nak számítanak). |
+| `stacked` | Kategóriánként egy oszlop, a sorozatok egymás után halmozva; érték minden szakaszban, összeg a végén. |
+| `percent` | Ugyanaz, mint a 100 %-os oszlopok; minden szakasz a kategóriából való részesedését mutatja. |
+| `pie`, `donut` | Egy sorozat, kategóriánként egy szelet, felirat értékkel és részesedéssel egy vezetővonalon (keskeny képernyőn alatta egy listában). A 7. szelettől a legkisebbek „Egyéb” alá vonódnak össze (`maxSlices`, alapértelmezés 6; `other: false` mindet megtartja). A gyűrű közepén az összeg látszik (`center: 'mean'` az átlaghoz, `false` ha semmi). |
+| `tiles` | Kulcsszám-csempék felfelé számoló számmal, jelölővel (▲ ▼ =) és rövid szöveggel. Egy elem hordozhat `spark: [values]` értéket egy kis vonalhoz. |
 | `table` | Egyszerű táblázat. |
+| `spark` | Kis vonal folyó szöveghez és csempékhez: `values`, opcionális `width` és `height`; az utolsó értéket mutatja, a nyílbillentyűk lépkednek a pontokon. |
+| `scatter` | *(extra)* Pontok vagy buborékok. A kategóriák a pontok, az első sorozat az x, a második az y, egy opcionális harmadik a buborék mérete. |
+| `hist` | *(extra)* Az első sorozat nyers értékeinek hisztogramja; `bins` vagy `binWidth`, különben automatikus. A táblázatnézet az osztályokat mutatja. |
+| `gauge` | *(extra)* Kategóriánként egy mérőóra az első sorozatból, `min` és `max`, opcionális `bands: [{ to, label }]` mintás zónákként rajzolva; a zóna neve a szám alá íródik. |
+| `heat` | *(extra)* Kategóriák (sorok) és sorozatok (oszlopok) rácsa, a cella színe az értékből, a szám minden cellában. A szöveg színe úgy van megválasztva, hogy a cellával szemben megtartsa a 4,5:1 arányt. |
+| `radar` | *(extra)* 3–8 tengely (kategória) és legfeljebb 3 sorozat, az értékek a pontoknál. A több tengelyt vagy sorozatot hibával elutasítja: ezen túl a radardiagram nem olvasható, használj oszlopokat. |
 
-A `bars` és a `lines` típusban van kapcsoló diagram és táblázat között, sorozatokat elrejtő jelmagyarázat, és a diagram alatt egy kiolvasósor.
+A `values` a `series` és `categories` helyett gyorsírás egyetlen sorozathoz (`hist`, `spark`); a `value` gyorsírás egyetlen `gauge`-hoz. A `tiles`, `table` és `spark` kivételével minden diagramtípuson van váltó diagram és táblázat között; a sorozattípusokon van sorozatokat elrejtő jelmagyarázat; mindegyiken van kijelzés a diagram alatt.
 
 ## Beállítások
 
 | Beállítás | Alapérték | |
 |---|---|---|
-| `type` | | `bars`, `lines`, `tiles` vagy `table` |
+| `type` | | A fenti típusok egyike |
 | `title` | | A diagram címe, egyben az akadálymentes neve |
 | `desc` | | Rövid leírás a cím alatt |
 | `categories` | | `[{ label, note }]`, a `note` a kiolvasósorban és a táblázatban jelenik meg |
@@ -59,7 +72,11 @@ A `bars` és a `lines` típusban van kapcsoló diagram és táblázat között, 
 | `source` | | Lábjegyzet-szöveg a diagram alatt |
 | `legend` | `true` | A `false` elrejti a jelmagyarázatot |
 | `zero` | `false` | Vonalak: a 0 is szerepeljen az értéktengelyen |
-| `labels` | angol | `{ chart, table, view, na, hint, keys }`, a saját megfogalmazásod |
+| `stacked` | `false` | Terület: a sorozatok halmozása |
+| `maxSlices`, `other`, `center` | `6`, `true`, `'sum'` | Kör és gyűrű, lásd fent |
+| `bins`, `binWidth` | automatikus | Hisztogram |
+| `min`, `max`, `bands` | `0`, `100` | Mérőóra |
+| `labels` | angol | `{ chart, table, view, na, hint, keys, other, sum, mean, share, count, range, size }`, a saját megfogalmazásod |
 | `lang` | az oldal nyelve | Számformátum, az `Intl.NumberFormat` révén |
 | `style` | `house` | `house`, `gauge`, `plain` vagy `genre` |
 | `theme` | automatikus | `light` vagy `dark` az egyik kikényszerítéséhez |
@@ -113,7 +130,7 @@ A színek CSS egyéni tulajdonságok a `.pc` elemen, világos és sötét módra
 |---|---|
 | `--pc-bg`, `--pc-fg`, `--pc-mut` | Háttér, szöveg, másodlagos szöveg |
 | `--pc-grid`, `--pc-sep` | Rácsvonalak, elválasztók |
-| `--pc-0` – `--pc-3` | Sorozatszínek |
+| `--pc-0` – `--pc-5` | Sorozat- és szeletszínek; a `--pc-5` az „Egyéb” színe is |
 | `--pc-good`, `--pc-bad` | A csempe széle a jobbhoz és a rosszabbhoz |
 | `--pc-cur` | A kijelölt jelölő körvonala |
 | `--pc-font`, `--pc-r` | Betűtípus és sarokrádiusz |
@@ -122,18 +139,18 @@ A `data-pc-style` (vagy a `style` beállítás) négy készlet közül választ:
 
 ## Akadálymentesség
 
-- A kép egy címkézett `img`; alatta billentyűzetes terület van: a Tab a diagramhoz visz, a nyílbillentyűk jelölők között lépnek, a Home és az End ugrik, az Escape töröl. A kijelölt jelölőt körvonal veszi körül, és egy `aria-live` régióban felolvassa.
-- Minden diagramnak van megfelelő fejlécekkel ellátott táblázatnézete. A sorozatokat minta (oszlopok) és alak (vonalak) különbözteti meg, nem csak a szín; a jobb és a rosszabb a csempéken jelölővel és szóval jelenik meg.
+- A kép egy címkézett `img`; alatta billentyűzetes terület van: a Tab a diagramhoz visz, a nyílbillentyűk jelölők (szeletek, pontok, cellák, mérőórák, osztályok) között lépnek, a Home és az End ugrik, az Escape töröl. A kijelölt jelölőt körvonal veszi körül, és egy `aria-live` régióban felolvassa.
+- Minden diagramnak van megfelelő fejlécekkel ellátott táblázatnézete. A sorozatokat és szeleteket minta (oszlopok, területek, körök) és alak (vonalak, pontok) különbözteti meg, nem csak a szín; a hőtérkép celláin ott a számuk, a mérőóra zónáin a nevük; a jobb és a rosszabb a csempéken jelölővel és szóval jelenik meg.
 - Minden szöveg legalább 13 px, és legalább 4,5:1 kontrasztú; a jelölők legalább 3:1-esek. A tesztcsomag mind a négy stílust ellenőrzi világos és sötét módban.
 - Csökkentett mozgásnál (rendszerbeállítás vagy `motion: 'off'`) az oszlopok és a vonalak azonnal megrajzolódnak, a számok pedig nem számolnak felfelé.
 
 ## Teljesítmény
 
-Körülbelül 23 KB szkript és 8 KB CSS, együtt körülbelül 10 KB gzip-pel tömörítve, függőségek nélkül. A diagramok csak szélességváltozáskor rajzolódnak újra; az animáció CSS-t használ, és akkor indul, amikor a diagram a látótérbe görgetődik.
+A mag körülbelül 37 KB szkript és 12 KB CSS, együtt 14,7 KB gzip-pel tömörítve; az extra típusok 5,6 KB-ot tesznek hozzá gzip-pel tömörítve. Függőségek nélkül. A diagramok csak szélességváltozáskor rajzolódnak újra; az animáció CSS-t használ, és akkor indul, amikor a diagram a látótérbe görgetődik.
 
 ## Tesztek
 
-A `python3 tools/build.py` a `src/` mappából építi fel a három fájlt. A `python3 tests/browser.py` fej nélküli Chromiumban megnyitja a `demo.html`-t (a `websockets` Python-csomag kell hozzá), ellenőrzi a kontrasztot, a betűméretet, a billentyűzetet, a táblázatnézetet és a csökkentett mozgást, a `--photos <mappa>` pedig képernyőképeket ment világos, sötét és csökkentett mozgású módban.
+A `python3 tools/build.py` a `src/` mappából építi fel az öt fájlt. A `python3 tests/browser.py` fej nélküli Chromiumban megnyitja a `demo.html`-t (a `websockets` Python-csomag kell hozzá), ellenőrzi a kontrasztot, a betűméretet, a billentyűzetet, a táblázatnézetet és a csökkentett mozgást minden típusnál, mind a három adatforrást és a diagramból kilógó szöveget, a `--photos <mappa>` pedig képernyőképeket ment világos, sötét és csökkentett mozgású módban.
 
 ## Fordítások
 

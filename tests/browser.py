@@ -17,6 +17,10 @@ def lum(h):
     c = [x / 12.92 if x <= .03928 else ((x + .055) / 1.055) ** 2.4 for x in c]; return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]
 def ratio(a_, b_):
     x, y = sorted((lum(a_), lum(b_)), reverse=True); return (x + .05) / (y + .05)
+import re, glob
+for _f in ['README.md'] + glob.glob(R + '/docs/i18n/README.*.md'):
+    _p = _f if os.path.isabs(_f) else os.path.join(R, _f)
+    ok(not re.search(r'!\[|\.webp|\.png|\.gif|<img', open(_p, encoding='utf-8').read()), f'{os.path.basename(_p)} verweist auf ein Bild')
 async def main():
     srv = None
     url = a.url
@@ -72,7 +76,7 @@ async def main():
                 for st in STY:
                     await setsel('st', st)
                     v = await js("""(function(){var e=document.querySelector('.pc'),s=getComputedStyle(e),g=function(k){return s.getPropertyValue(k).trim()};
-                      return {bg:g('--pc-bg'),fg:g('--pc-fg'),mut:g('--pc-mut'),s:[0,1,2,3].map(function(i){return g('--pc-'+i)}),good:g('--pc-good'),bad:g('--pc-bad'),cur:g('--pc-cur')}})()""")
+                      return {bg:g('--pc-bg'),fg:g('--pc-fg'),mut:g('--pc-mut'),s:[0,1,2,3,4,5].map(function(i){return g('--pc-'+i)}),good:g('--pc-good'),bad:g('--pc-bad'),cur:g('--pc-cur')}})()""")
                     ok(ratio(v['fg'], v['bg']) >= 4.5, f'{st}/{scheme}: Text/Grund {ratio(v["fg"], v["bg"]):.2f}')
                     ok(ratio(v['mut'], v['bg']) >= 4.5, f'{st}/{scheme}: Grauton {ratio(v["mut"], v["bg"]):.2f}')
                     for i, col in enumerate(v['s']): ok(ratio(col, v['bg']) >= 3, f'{st}/{scheme}: Reihe {i} {ratio(col, v["bg"]):.2f}')
@@ -108,6 +112,84 @@ async def main():
             await js("document.querySelector('.pc-legend button').click()"); await asyncio.sleep(.3)
             ok(await js("document.querySelector('.pc-legend button').getAttribute('aria-pressed')") == 'false', 'Legende schaltet')
             ok(await js("document.getElementById('c_tab').querySelector('.pc-title')!==null && document.getElementById('c_ld').querySelectorAll('.pc-bar').length>0"), 'Quellen JSON-LD und HTML-Tabelle')
+            # --- neue Typen: Zeichnen, Tastatur, Tabelle, Quellen, Kontrast der Zellen, Ueberlauf
+            NEW = ['n_pie', 'n_donut', 'n_stack', 'n_pct', 'n_area', 'n_sarea', 'n_scatter', 'n_bubble', 'n_hist', 'n_gauge', 'n_heat', 'n_radar']
+            async def overflow(tag):
+                bad = await js("""(function(){var out=[];document.querySelectorAll('#more .pc-svg').forEach(function(s){var r=s.getBoundingClientRect();
+                  s.querySelectorAll('text').forEach(function(t){var b=t.getBoundingClientRect();if(b.width&&(b.left<r.left-2||b.right>r.right+2))out.push(s.parentNode.parentNode.id+':'+t.textContent.slice(0,12))})});return out})()""")
+                ok(not bad, f'Text ausserhalb des Diagramms ({tag}): {bad[:4]}')
+            for scheme in ('light', 'dark'):
+                await load(scheme=scheme)
+                for st in STY:
+                    await setsel('st', st); await settle()
+                    for i in NEW:
+                        n_ = await js(f"document.querySelectorAll('#{i} .pc-mk').length")
+                        ok(n_ and n_ >= 2, f'{i} {st}/{scheme}: Marken {n_}')
+                    await overflow(f'{st}/{scheme}')
+                    mins = await js("""(function(){var bad=[];document.querySelectorAll('#more .pc-svg text').forEach(function(t){var fs=parseFloat(getComputedStyle(t).fontSize);if(fs<13)bad.push(t.textContent)});return bad})()""")
+                    ok(not mins, f'Schrift < 13 px {st}/{scheme}: {mins[:3]}')
+                    # Kontrast der Zahlentexte: Heatmap-Zellen und Segmenttexte gegen ihren Grund
+                    cells = await js("""(function(){var o=[];document.querySelectorAll('#n_heat .pc-hit.pc-cell').forEach(function(c){var t=c.parentNode.querySelector('text');if(c.style.fill&&t)o.push([getComputedStyle(c).fill,getComputedStyle(t).fill])});return o})()""")
+                    for f, t in cells:
+                        import re as _re
+                        tt = '#%02x%02x%02x' % tuple(int(x) for x in _re.findall(r'\d+', t)[:3]); f = '#%02x%02x%02x' % tuple(int(x) for x in _re.findall(r'\d+', f)[:3])
+                        ok(ratio(f, tt) >= 4.5, f'Heatmap-Zelle {st}/{scheme}: {f} {tt} {ratio(f, tt):.2f}')
+                    if a.photos and scheme and st in STY:
+                        for i in NEW:
+                            r = await js(f"(function(){{var r=document.getElementById('{i}').getBoundingClientRect();return [r.left,r.top+scrollY,r.width,r.height]}})()")
+                            res = await cmd('Page.captureScreenshot', format='png', captureBeyondViewport=True, clip={'x': r[0], 'y': r[1], 'width': r[2], 'height': r[3], 'scale': 1})
+                            open(os.path.join(a.photos, f'{i[2:]}-{st}-{"hell" if scheme == "light" else "dunkel"}.png'), 'wb').write(base64.b64decode(res['data']))
+            # Tastatur und Tabelle je neuer Typ
+            await load(scheme='light'); await setsel('st', 'house'); await settle()
+            for i in NEW:
+                await js(f"document.querySelector('#{i} .pc-plot').scrollIntoView({{block:'center'}});document.querySelector('#{i} .pc-plot').focus()"); await asyncio.sleep(.4)
+                reads = []
+                for kk, vk in (('ArrowRight', 39), ('ArrowRight', 39), ('ArrowDown', 40), ('ArrowLeft', 37)):
+                    await key(kk, kk, vk); reads.append(await js(f"document.querySelector('#{i} .pc-read').textContent"))
+                ok(len(set(reads)) >= 2 and all(reads), f'{i}: Pfeiltasten melden Werte {reads}')
+                ok(await js(f"document.querySelectorAll('#{i} .pc-cur').length") == 1, f'{i}: genau eine Auswahl')
+                await key('Escape', 'Escape', 27)
+                ok(await js(f"document.querySelectorAll('#{i} .pc-cur').length") == 0, f'{i}: Escape')
+                await js(f"document.querySelectorAll('#{i} .pc-view button')[1].click()"); await asyncio.sleep(.2)
+                ok(await js(f"(function(){{var t=document.querySelector('#{i} .pc-tablewrap');return !t.hidden&&t.querySelectorAll('tbody tr').length>=2&&!!t.querySelector('th[scope=row]')}})()"), f'{i}: Tabellenansicht')
+                await js(f"document.querySelectorAll('#{i} .pc-view button')[0].click()"); await asyncio.sleep(.3)
+            # Sparkline: Tastatur
+            await js("var sp=document.querySelector('#p_spark .pc-spark');sp.scrollIntoView();sp.focus()"); await asyncio.sleep(.3)
+            await key('ArrowLeft', 'ArrowLeft', 37)
+            ok(await js("document.querySelector('#p_spark [aria-live]').textContent.length>0"), 'Sparkline: aria-live')
+            ok(await js("!!document.querySelector('#p_spark table')"), 'Sparkline: Tabelle')
+            # alle drei Quellen je Typ gleich viele Marken
+            src = await js("""(async function(){
+              var pend=[];var specs={pie:{type:'pie',categories:[{label:'A'},{label:'B'},{label:'C'}],series:[{name:'S',values:[3,2,1]}]},
+                donut:{type:'donut',categories:[{label:'A'},{label:'B'},{label:'C'}],series:[{name:'S',values:[3,2,1]}]},
+                stacked:{type:'stacked',categories:[{label:'A'},{label:'B'}],series:[{name:'S',values:[3,2]},{name:'T',values:[1,2]}]},
+                percent:{type:'percent',categories:[{label:'A'},{label:'B'}],series:[{name:'S',values:[3,2]},{name:'T',values:[1,2]}]},
+                area:{type:'area',stacked:true,categories:[{label:'A'},{label:'B'},{label:'C'}],series:[{name:'S',values:[3,2,4]},{name:'T',values:[1,2,3]}]},
+                scatter:{type:'scatter',categories:[{label:'A'},{label:'B'},{label:'C'}],series:[{name:'X',values:[1,2,3]},{name:'Y',values:[3,1,2]},{name:'Z',values:[5,6,7]}]},
+                hist:{type:'hist',categories:[{label:'a'},{label:'b'},{label:'c'},{label:'d'},{label:'e'},{label:'f'}],series:[{name:'V',values:[1,2,2,3,5,8]}]},
+                gauge:{type:'gauge',min:0,max:10,categories:[{label:'A'},{label:'B'}],series:[{name:'V',values:[3,7]}]},
+                heat:{type:'heat',categories:[{label:'A'},{label:'B'}],series:[{name:'S',values:[3,2]},{name:'T',values:[1,null]}]},
+                radar:{type:'radar',categories:[{label:'A'},{label:'B'},{label:'C'}],series:[{name:'S',values:[3,2,4]}]}};
+              var res={};
+              Object.keys(specs).forEach(function(k){var sp=specs[k],out=[];
+                var a=document.createElement('div');document.body.appendChild(a);a.style.width='700px';PsoCharts.create(a,JSON.parse(JSON.stringify(sp)));
+                var ld={'@context':'https://schema.org','@type':'Dataset','name':'t',variableMeasured:sp.series.map(function(s){return{'@type':'PropertyValue',name:s.name,valueReference:s.values.map(function(v,i){return{'@type':'PropertyValue',name:sp.categories[i].label,value:v}})}})};
+                var sc=document.createElement('script');sc.type='application/ld+json';sc.id='ld_'+k;sc.textContent=JSON.stringify(ld);document.body.appendChild(sc);
+                var b=document.createElement('div');b.style.width='700px';document.body.appendChild(b);b.setAttribute('data-pso-chart',JSON.stringify({type:sp.type,stacked:sp.stacked,min:sp.min,max:sp.max,title:'t'}));b.setAttribute('data-chart-source','#ld_'+k);
+                var tb=document.createElement('table');tb.id='tb_'+k;tb.innerHTML='<thead><tr><th></th>'+sp.series.map(function(s){return'<th scope=col>'+s.name+'</th>'}).join('')+'</tr></thead><tbody>'+sp.categories.map(function(c,i){return'<tr><th scope=row>'+c.label+'</th>'+sp.series.map(function(s){return'<td data-value="'+(s.values[i]==null?'':s.values[i])+'"></td>'}).join('')+'</tr>'}).join('')+'</tbody>';document.body.appendChild(tb);
+                var c=document.createElement('div');c.style.width='700px';document.body.appendChild(c);c.setAttribute('data-pso-chart',JSON.stringify({type:sp.type,stacked:sp.stacked,min:sp.min,max:sp.max,title:'t'}));c.setAttribute('data-chart-source','#tb_'+k);
+                PsoCharts.auto(document.body);
+                pend.push([k,a,b,c,tb,sc])});
+              await new Promise(function(r){setTimeout(r,700)});
+              pend.forEach(function(q){res[q[0]]=[q[1],q[2],q[3]].map(function(x){return x.querySelectorAll('.pc-mk').length});[q[1],q[2],q[3],q[4],q[5]].forEach(function(x){x.remove()})});
+              return res})()""")
+            await asyncio.sleep(.5)
+            for k, v in src.items(): ok(v[0] > 0 and v[0] == v[1] == v[2], f'Quellen {k}: JSON/JSON-LD/Tabelle {v}')
+            # Grenzen
+            lim = await js("""(async function(){var o=[];try{PsoCharts.create(document.createElement('div'),{type:'radar',categories:[1,2,3,4,5,6,7,8,9].map(function(i){return{label:''+i}}),series:[{name:'a',values:[1,2,3,4,5,6,7,8,9]}]});o.push('keine Sperre')}catch(e){o.push('ok')}
+              var p=document.createElement('div');p.style.width='700px';document.body.appendChild(p);PsoCharts.create(p,{type:'pie',categories:[1,2,3,4,5,6].map(function(i){return{label:'k'+i}}),series:[{name:'a',values:[1,2,3,4,5,6]}]});
+              var q=document.createElement('div');q.style.width='700px';document.body.appendChild(q);PsoCharts.create(q,{type:'pie',categories:[1,2,3,4,5,6,7].map(function(i){return{label:'k'+i}}),series:[{name:'a',values:[1,2,3,4,5,6,7]}]});await new Promise(function(r){setTimeout(r,600)});o.push(p.querySelectorAll('.pc-mk').length);o.push(q.querySelectorAll('.pc-mk').length);o.push(/Other/.test(q.textContent));p.remove();q.remove();return o})()""")
+            ok(lim == ['ok', 6, 6, True], f'Radar-Grenze / Sonstiges ab 7: {lim}')
             # --- Fotos + reduziert
             for scheme in ('light', 'dark'):
                 await load(scheme=scheme)
@@ -117,10 +199,21 @@ async def main():
             await load(scheme='light', reduce=True); await settle()
             red = await js("""(function(){var b=document.querySelector('.pc-bar'),s=getComputedStyle(b),v=document.querySelector('.pc-val');return [s.animationName,s.transform,getComputedStyle(v).opacity]})()""")
             ok(red[0] == 'none' and red[2] == '1' and 'matrix(0' not in red[1], f'reduzierte Bewegung: {red}')
+            rn = await js("""(function(){var bad=[];document.querySelectorAll('#more .pc-fi,#more .pc-pt,#more .pc-val').forEach(function(e){if(getComputedStyle(e).opacity!=='1')bad.push(e.getAttribute('class'))});
+              document.querySelectorAll('#more .pc-sw').forEach(function(e){if(parseFloat(getComputedStyle(e).strokeDashoffset)!==0)bad.push('sw')});
+              document.querySelectorAll('#more .pc-vbar,#more .pc-area,#more .pc-poly').forEach(function(e){var t=getComputedStyle(e).transform;if(t!=='none'&&/matrix\\(0|matrix\\([^,]+, [^,]+, [^,]+, 0,/.test(t))bad.push('t '+t)});
+              document.querySelectorAll('#more .pc-needle').forEach(function(e){if(getComputedStyle(e).animationName!=='none')bad.push('needle')});return bad.slice(0,5)})()""")
+            ok(not rn, f'reduzierte Bewegung bei neuen Typen: {rn}')
             if a.photos: await shot('house-reduziert.png')
             await load(w=390, h=800, scheme='light', mobile=True); await settle()
             ok(await js("document.documentElement.scrollWidth<=392"), 'kein waagerechtes Scrollen am Handy')
             if a.photos: await shot('house-handy.png', 390)
+            await load(w=390, h=800, scheme='light', mobile=True); await settle(); await overflow('Handy')
+            if a.photos:
+                for i in NEW:
+                    r = await js(f"(function(){{var r=document.getElementById('{i}').getBoundingClientRect();return [r.left,r.top+scrollY,r.width,r.height]}})()")
+                    res = await cmd('Page.captureScreenshot', format='png', captureBeyondViewport=True, clip={'x': r[0], 'y': r[1], 'width': r[2], 'height': r[3], 'scale': 1})
+                    open(os.path.join(a.photos, f'{i[2:]}-handy.png'), 'wb').write(base64.b64decode(res['data']))
             ok(not errs, f'Skriptfehler: {errs[:3]}')
     finally:
         p.terminate(); shutil.rmtree(tmp, ignore_errors=True)

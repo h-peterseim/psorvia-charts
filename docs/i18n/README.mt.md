@@ -1,12 +1,12 @@
 # PSOrvia Charts
 
-[![PSOrvia Charts](../preview.webp)](https://h-peterseim.github.io/psorvia-charts/demo.html)
-
 **Charts animati u aċċessibbli għas-sit web tiegħek**
+
+PSOrvia · [psorvia.io](https://psorvia.io)
 
 ### ▶ [Demo ħajja](https://h-peterseim.github.io/psorvia-charts/demo.html)
 
-Vireg madwar linja bażi, vireg miġbura f'gruppi, linji, tiles taċ-ċifri ewlenin u veduta ta' tabella. JavaScript u CSS sempliċi mingħajr dipendenzi: il-valuri jinsabu ħdejn il-marki, kull chart jaħdem bit-tastiera, u b'moviment imnaqqas xejn ma jiċċaqlaq.
+Vireg, linji, pie u ring, vireg impilati u ta' 100 %, erjas, scatter u bubbles, histogram, sparkline, gauge, heatmap, radar, tiles taċ-ċifri ewlenin u veduta ta' tabella. JavaScript u CSS sempliċi mingħajr dipendenzi: il-valuri jinsabu ħdejn il-marki, kull chart jaħdem bit-tastiera, u b'moviment imnaqqas xejn ma jiċċaqlaq.
 
 ## Użu
 
@@ -26,9 +26,12 @@ PsoCharts.create(document.getElementById('speed'), {
 ```html
 <script type="module">
 import { create, auto } from './psorvia-charts.esm.js';
+import './psorvia-charts.extra.esm.js'; // biss għal scatter, hist, gauge, heat, radar
 auto();
 </script>
 ```
+
+Il-qalba tkopri bars, lines, area, pie, ring, vireg impilati u ta' 100 %, tiles, sparkline u tabella. Scatter, histogram, gauge, heatmap u radar jinsabu f'fajl tieni, `psorvia-charts.extra.js` (script klassiku, tgħabbih wara l-ewlieni) jew `psorvia-charts.extra.esm.js` (modulu). Mingħajru dawn it-tipi jirrapportaw żball ċar u xejn aktar ma jinbidel.
 
 ## Tipi ta' chart
 
@@ -36,16 +39,26 @@ auto();
 |---|---|
 | `bars` | Vireg wieħed għal kull valur, li jikber minn linja bażi (`baseline: 1` jifred l-aktar mgħaġġel mill-aktar bil-mod). Diversi sensiela jagħtu vireg miġbura f'gruppi. |
 | `lines` | Linja waħda għal kull sensiela matul il-kategoriji, b'tikketta fl-aħħar tal-linja. |
-| `tiles` | Tiles taċ-ċifri ewlenin b'numru li jgħodd 'il fuq, marka (▲ ▼ =) u test qasir. |
+| `area` | Linji mimlija minn żero; `stacked: true` jimpila s-sensiela (valuri negattivi jgħoddu bħala 0). |
+| `stacked` | Vireg wieħed għal kull kategorija, is-sensiela mpilata tmiem ma' tmiem; valur f'kull segment, total fl-aħħar. |
+| `percent` | L-istess bħal vireg ta' 100 %; kull segment juri sehemu mill-kategorija. |
+| `pie`, `donut` | Sensiela waħda, porzjon wieħed għal kull kategorija, tikketta b'valur u sehem fuq linja gwida (fuq skrins dojoq f'lista taħt). Minn 7 porzjonijiet 'il fuq, l-iżgħar jingħaqdu f'"Oħrajn" (`maxSlices`, default 6; `other: false` iżomm kollha). Iċ-ċirku juri t-total fnofsu (`center: 'mean'` għall-medja, `false` għal xejn). |
+| `tiles` | Tiles taċ-ċifri ewlenin b'numru li jgħodd 'il fuq, marka (▲ ▼ =) u test qasir. Element jista' jġorr `spark: [values]` għal linja żgħira. |
 | `table` | Tabella sempliċi. |
+| `spark` | Linja żgħira għat-test u t-tiles: `values`, `width` u `height` jekk trid; juri l-aħħar valur, iċ-ċwievet tal-vleġeġ jgħaddu mill-punti. |
+| `scatter` | *(extra)* Punti jew bubbles. Il-kategoriji huma l-punti, l-ewwel sensiela hija x, it-tieni y, tielet fakultattiva hija d-daqs tal-bubble. |
+| `hist` | *(extra)* Histogram tal-valuri mhux ipproċessati tal-ewwel sensiela; `bins` jew `binWidth`, inkella awtomatiku. Il-veduta tat-tabella turi l-klassijiet. |
+| `gauge` | *(extra)* Dial wieħed għal kull kategorija mill-ewwel sensiela, `min` u `max`, `bands: [{ to, label }]` fakultattivi miġbuda bħala żoni b'mudell; l-isem taż-żona jinkiteb taħt in-numru. |
+| `heat` | *(extra)* Grilja ta' kategoriji (ringieli) u sensiela (kolonni), kulur taċ-ċellula mill-valur, in-numru f'kull ċellula. Il-kulur tat-test jintgħażel biex iżomm 4.5:1 kontra ċ-ċellula. |
+| `radar` | *(extra)* 3 sa 8 assi (kategoriji) u l-aktar 3 sensiela, valuri fil-punti. Aktar assi jew sensiela jiġu rrifjutati b'żball: warajhom chart radar ma jinqarax, uża vireg. |
 
-`bars` u `lines` għandhom swiċċ bejn chart u tabella, leġġenda li taħbi s-sensiela, u qari taħt il-chart.
+`values` minflok `series` u `categories` huwa shortcut għal sensiela waħda (`hist`, `spark`); `value` huwa shortcut għal `gauge` wieħed. Kull tip ta' chart ħlief `tiles`, `table` u `spark` għandu swiċċ bejn chart u tabella; it-tipi ta' sensiela għandhom leġġenda li taħbi s-sensiela; kollha għandhom qari taħt il-chart.
 
 ## Għażliet
 
 | Għażla | Predefinit | |
 |---|---|---|
-| `type` | | `bars`, `lines`, `tiles` jew `table` |
+| `type` | | Wieħed mit-tipi ta' hawn fuq |
 | `title` | | Titlu tal-chart, ukoll l-isem aċċessibbli |
 | `desc` | | Deskrizzjoni qasira taħt it-titlu |
 | `categories` | | `[{ label, note }]`, `note` jidher fil-qari u fit-tabella |
@@ -59,7 +72,11 @@ auto();
 | `source` | | Test tal-footer taħt il-chart |
 | `legend` | `true` | `false` jaħbi l-leġġenda |
 | `zero` | `false` | Linji: inkludi 0 fuq l-assi tal-valuri |
-| `labels` | Ingliż | `{ chart, table, view, na, hint, keys }`, kliem tiegħek stess |
+| `stacked` | `false` | Erja: timpila s-sensiela |
+| `maxSlices`, `other`, `center` | `6`, `true`, `'sum'` | Pie u ring, ara hawn fuq |
+| `bins`, `binWidth` | awtomatiku | Histogram |
+| `min`, `max`, `bands` | `0`, `100` | Gauge |
+| `labels` | Ingliż | `{ chart, table, view, na, hint, keys, other, sum, mean, share, count, range, size }`, kliem tiegħek stess |
 | `lang` | lingwa tal-paġna | Format tan-numri, permezz ta' `Intl.NumberFormat` |
 | `style` | `house` | `house`, `gauge`, `plain` jew `genre` |
 | `theme` | awtomatiku | `light` jew `dark` biex tiġi mġiegħla waħda |
@@ -113,7 +130,7 @@ Il-kuluri huma proprjetajiet personalizzati tas-CSS fuq `.pc`, għal ċar u skur
 |---|---|
 | `--pc-bg`, `--pc-fg`, `--pc-mut` | Sfond, test, test sekondarju |
 | `--pc-grid`, `--pc-sep` | Linji tal-griglja, separaturi |
-| `--pc-0` sa `--pc-3` | Kuluri tas-sensiela |
+| `--pc-0` sa `--pc-5` | Kuluri tas-sensiela u tal-porzjonijiet; `--pc-5` huwa wkoll il-kulur ta' "Oħrajn" |
 | `--pc-good`, `--pc-bad` | Xifer tat-tile għal aħjar u agħar |
 | `--pc-cur` | Kontorn tal-marka magħżula |
 | `--pc-font`, `--pc-r` | Font u raġġ tal-kantunieri |
@@ -122,18 +139,18 @@ Il-kuluri huma proprjetajiet personalizzati tas-CSS fuq `.pc`, għal ċar u skur
 
 ## Aċċessibbiltà
 
-- L-istampa hija `img` b'tikketta; taħtha hemm żona tat-tastiera: Tab jilħaq il-chart, iċ-ċwievet tal-vleġeġ jiċċaqilqu bejn il-marki, Home u End jaqbżu, Escape jneħħi. Il-marka magħżula għandha kontorn u tinqara f'reġjun `aria-live`.
-- Kull chart għandu veduta ta' tabella b'headers xierqa. Is-sensiela jvarjaw b'mudell (vireg) u forma (linji), mhux biss bil-kulur; aħjar u agħar fuq it-tiles bi marka u kelma.
+- L-istampa hija `img` b'tikketta; taħtha hemm żona tat-tastiera: Tab jilħaq il-chart, iċ-ċwievet tal-vleġeġ jiċċaqilqu bejn il-marki (porzjonijiet, punti, ċelloli, dials, klassijiet), Home u End jaqbżu, Escape jneħħi. Il-marka magħżula għandha kontorn u tinqara f'reġjun `aria-live`.
+- Kull chart għandu veduta ta' tabella b'headers xierqa. Is-sensiela u l-porzjonijiet jvarjaw b'mudell (vireg, erjas, pie) u forma (linji, punti), mhux biss bil-kulur; iċ-ċelloli tal-heatmap iġorru n-numru tagħhom, iż-żoni tal-gauge isimhom; aħjar u agħar fuq it-tiles bi marka u kelma.
 - It-test kollu huwa mill-inqas 13 px u għandu kuntrast ta' mill-inqas 4.5:1; il-marki mill-inqas 3:1. Is-suite tat-testijiet tiċċekkja l-erba' stili kollha fid-dawl u fid-dlam.
 - B'moviment imnaqqas (issettjar tas-sistema jew `motion: 'off'`) il-vireg u l-linji jinġibdu minnufih u n-numri ma jgħoddux 'il fuq.
 
 ## Prestazzjoni
 
-Madwar 23 KB ta' script u 8 KB ta' CSS, madwar 10 KB gzipped flimkien, mingħajr dipendenzi. Il-charts jerġgħu jinġibdu biss meta jinbidel il-wisa'; l-animazzjoni tuża CSS u tibda meta l-chart jidħol fil-vista.
+Il-qalba hija madwar 37 KB ta' script u 12 KB ta' CSS, 14.7 KB gzipped flimkien; it-tipi extra jżidu 5.6 KB gzipped. Mingħajr dipendenzi. Il-charts jerġgħu jinġibdu biss meta jinbidel il-wisa'; l-animazzjoni tuża CSS u tibda meta l-chart jidħol fil-vista.
 
 ## Testijiet
 
-`python3 tools/build.py` jibni t-tliet fajls minn `src/`. `python3 tests/browser.py` jiftaħ `demo.html` f'Chromium headless (jeħtieġ il-pakkett Python `websockets`), jiċċekkja l-kuntrast, id-daqs tal-font, it-tastiera, il-veduta tat-tabella u l-moviment imnaqqas, u `--photos <folder>` isalva screenshots fid-dawl, fid-dlam u b'moviment imnaqqas.
+`python3 tools/build.py` jibni il-ħames fajls minn `src/`. `python3 tests/browser.py` jiftaħ `demo.html` f'Chromium headless (jeħtieġ il-pakkett Python `websockets`), jiċċekkja l-kuntrast, id-daqs tal-font, it-tastiera, il-veduta tat-tabella u l-moviment imnaqqas għal kull tip, it-tliet sorsi tad-data kollha u t-test li joħroġ barra mill-chart, u `--photos <folder>` isalva screenshots fid-dawl, fid-dlam u b'moviment imnaqqas.
 
 ## Traduzzjonijiet
 

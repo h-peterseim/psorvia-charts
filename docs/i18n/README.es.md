@@ -1,12 +1,12 @@
 # PSOrvia Charts
 
-[![PSOrvia Charts](../preview.webp)](https://h-peterseim.github.io/psorvia-charts/demo.html)
-
 **Gráficos animados y accesibles para tu sitio web**
+
+PSOrvia · [psorvia.io](https://psorvia.io)
 
 ### ▶ [Demo en vivo](https://h-peterseim.github.io/psorvia-charts/demo.html)
 
-Barras en torno a una línea base, barras agrupadas, líneas, tarjetas de cifras clave y una vista de tabla. JavaScript y CSS sin más y sin dependencias: los valores están junto a las marcas, todos los gráficos funcionan con el teclado y, con movimiento reducido, nada se mueve.
+Barras, líneas, sectores y anillo, barras apiladas y al 100 %, áreas, dispersión y burbujas, histograma, sparkline, dial, mapa de calor, radar, tarjetas de cifras clave y una vista de tabla. JavaScript y CSS sin más y sin dependencias: los valores están junto a las marcas, todos los gráficos funcionan con el teclado y, con movimiento reducido, nada se mueve.
 
 ## Uso
 
@@ -26,9 +26,12 @@ PsoCharts.create(document.getElementById('speed'), {
 ```html
 <script type="module">
 import { create, auto } from './psorvia-charts.esm.js';
+import './psorvia-charts.extra.esm.js'; // solo para scatter, hist, gauge, heat, radar
 auto();
 </script>
 ```
+
+El núcleo cubre bars, lines, area, pie, ring, barras apiladas y al 100 %, tiles, sparkline y table. Dispersión, histograma, dial, mapa de calor y radar están en un segundo archivo, `psorvia-charts.extra.js` (script clásico, cárgalo después del script principal) o `psorvia-charts.extra.esm.js` (módulo). Sin él, esos tipos informan de un error claro y nada más cambia.
 
 ## Tipos de gráfico
 
@@ -36,16 +39,26 @@ auto();
 |---|---|
 | `bars` | Una barra por valor, que crece desde una línea base (`baseline: 1` separa lo más rápido de lo más lento). Varias series dan barras agrupadas. |
 | `lines` | Una línea por serie a lo largo de las categorías, con etiqueta al final de la línea. |
-| `tiles` | Tarjetas de cifras clave con un número que cuenta hacia arriba, una marca (▲ ▼ =) y un texto breve. |
+| `area` | Líneas rellenas desde cero; `stacked: true` apila las series (los valores negativos cuentan como 0). |
+| `stacked` | Una barra por categoría, con las series apiladas una tras otra; valor en cada segmento, total al final. |
+| `percent` | Lo mismo que las barras al 100 %; cada segmento muestra su parte de la categoría. |
+| `pie`, `donut` | Una serie, un sector por categoría, etiqueta con valor y porcentaje sobre una línea guía (en pantallas estrechas en una lista debajo). A partir de 7 sectores, los más pequeños se unen en «Otros» (`maxSlices`, por defecto 6; `other: false` los conserva todos). El anillo muestra el total en el centro (`center: 'mean'` para la media, `false` para nada). |
+| `tiles` | Tarjetas de cifras clave con un número que cuenta hacia arriba, una marca (▲ ▼ =) y un texto breve. Un elemento puede llevar `spark: [values]` para una línea pequeña. |
 | `table` | Una tabla sencilla. |
+| `spark` | Una línea pequeña para texto corrido y tarjetas: `values`, `width` y `height` opcionales; muestra el último valor, las flechas recorren los puntos. |
+| `scatter` | *(extra)* Puntos o burbujas. Las categorías son los puntos, la primera serie es x, la segunda y, una tercera opcional el tamaño de la burbuja. |
+| `hist` | *(extra)* Histograma de los valores en bruto de la primera serie; `bins` o `binWidth`, si no, automático. La vista de tabla muestra las clases. |
+| `gauge` | *(extra)* Un dial por categoría a partir de la primera serie, `min` y `max`, `bands: [{ to, label }]` opcional dibujado como zonas con patrón; el nombre de la zona se escribe bajo el número. |
+| `heat` | *(extra)* Cuadrícula de categorías (filas) y series (columnas), color de celda según el valor, el número en cada celda. El color del texto se elige para que mantenga 4,5:1 frente a la celda. |
+| `radar` | *(extra)* De 3 a 8 ejes (categorías) y como máximo 3 series, valores en los puntos. Más ejes o series se rechazan con un error: más allá, un gráfico de radar no se lee, usa barras. |
 
-`bars` y `lines` tienen un conmutador entre gráfico y tabla, una leyenda que oculta series y una lectura bajo el gráfico.
+`values` en lugar de `series` y `categories` es un atajo para una sola serie (`hist`, `spark`); `value` es un atajo para un solo `gauge`. Todos los tipos de gráfico salvo `tiles`, `table` y `spark` tienen un conmutador entre gráfico y tabla; los tipos con series tienen una leyenda que oculta series; todos tienen una lectura bajo el gráfico.
 
 ## Opciones
 
 | Opción | Valor por defecto | |
 |---|---|---|
-| `type` | | `bars`, `lines`, `tiles` o `table` |
+| `type` | | Uno de los tipos anteriores |
 | `title` | | Título del gráfico, también el nombre accesible |
 | `desc` | | Descripción breve bajo el título |
 | `categories` | | `[{ label, note }]`, `note` se muestra en la lectura y en la tabla |
@@ -59,7 +72,11 @@ auto();
 | `source` | | Texto de pie bajo el gráfico |
 | `legend` | `true` | `false` oculta la leyenda |
 | `zero` | `false` | Líneas: incluir el 0 en el eje de valores |
-| `labels` | inglés | `{ chart, table, view, na, hint, keys }`, tus propias formulaciones |
+| `stacked` | `false` | Área: apilar las series |
+| `maxSlices`, `other`, `center` | `6`, `true`, `'sum'` | Sectores y anillo, véase arriba |
+| `bins`, `binWidth` | automático | Histograma |
+| `min`, `max`, `bands` | `0`, `100` | Dial |
+| `labels` | inglés | `{ chart, table, view, na, hint, keys, other, sum, mean, share, count, range, size }`, tus propias formulaciones |
 | `lang` | idioma de la página | Formato de números, mediante `Intl.NumberFormat` |
 | `style` | `house` | `house`, `gauge`, `plain` o `genre` |
 | `theme` | automático | `light` o `dark` para forzar uno |
@@ -113,7 +130,7 @@ Los colores son propiedades personalizadas de CSS en `.pc`, para claro y oscuro 
 |---|---|
 | `--pc-bg`, `--pc-fg`, `--pc-mut` | Fondo, texto, texto secundario |
 | `--pc-grid`, `--pc-sep` | Líneas de cuadrícula, separadores |
-| `--pc-0` a `--pc-3` | Colores de serie |
+| `--pc-0` a `--pc-5` | Colores de serie y de sector; `--pc-5` es también el color de «Otros» |
 | `--pc-good`, `--pc-bad` | Borde de la tarjeta para mejor y peor |
 | `--pc-cur` | Contorno de la marca seleccionada |
 | `--pc-font`, `--pc-r` | Fuente y radio de las esquinas |
@@ -122,18 +139,18 @@ Los colores son propiedades personalizadas de CSS en `.pc`, para claro y oscuro 
 
 ## Accesibilidad
 
-- La imagen es un `img` con etiqueta; debajo hay una zona de teclado: Tab llega al gráfico, las flechas se mueven entre marcas, Inicio y Fin saltan, Escape borra la selección. La marca seleccionada se perfila y se lee en una región `aria-live`.
-- Cada gráfico tiene una vista de tabla con encabezados correctos. Las series se distinguen por patrón (barras) y forma (líneas), no solo por color; mejor y peor en las tarjetas por marca y palabra.
+- La imagen es un `img` con etiqueta; debajo hay una zona de teclado: Tab llega al gráfico, las flechas se mueven entre marcas (sectores, puntos, celdas, diales, clases), Inicio y Fin saltan, Escape borra la selección. La marca seleccionada se perfila y se lee en una región `aria-live`.
+- Cada gráfico tiene una vista de tabla con encabezados correctos. Las series y los sectores se distinguen por patrón (barras, áreas, sectores circulares) y forma (líneas, puntos), no solo por color; las celdas del mapa de calor llevan su número, las zonas del dial su nombre; mejor y peor en las tarjetas por marca y palabra.
 - Todo el texto mide al menos 13 px y tiene al menos 4,5:1 de contraste; las marcas, al menos 3:1. La batería de pruebas comprueba los cuatro estilos en claro y oscuro.
 - Con movimiento reducido (ajuste del sistema o `motion: 'off'`) las barras y las líneas se dibujan de golpe y los números no cuentan hacia arriba.
 
 ## Rendimiento
 
-Unos 23 KB de script y 8 KB de CSS, unos 10 KB comprimidos con gzip en conjunto, sin dependencias. Los gráficos solo se redibujan al cambiar el ancho; la animación usa CSS y empieza cuando el gráfico entra en pantalla al desplazarse.
+El núcleo ocupa unos 37 KB de script y 12 KB de CSS, 14,7 KB comprimidos con gzip en conjunto; los tipos extra añaden 5,6 KB con gzip. Sin dependencias. Los gráficos solo se redibujan al cambiar el ancho; la animación usa CSS y empieza cuando el gráfico entra en pantalla al desplazarse.
 
 ## Pruebas
 
-`python3 tools/build.py` genera los tres archivos a partir de `src/`. `python3 tests/browser.py` abre `demo.html` en Chromium sin interfaz (necesita el paquete de Python `websockets`), comprueba contraste, tamaño de fuente, teclado, vista de tabla y movimiento reducido, y `--photos <folder>` guarda capturas en claro, oscuro y con movimiento reducido.
+`python3 tools/build.py` genera los cinco archivos a partir de `src/`. `python3 tests/browser.py` abre `demo.html` en Chromium sin interfaz (necesita el paquete de Python `websockets`), comprueba contraste, tamaño de fuente, teclado, vista de tabla y movimiento reducido de cada tipo, las tres fuentes de datos, el texto que se sale del gráfico, y `--photos <folder>` guarda capturas en claro, oscuro y con movimiento reducido.
 
 ## Traducciones
 
