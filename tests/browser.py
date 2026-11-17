@@ -214,6 +214,16 @@ async def main():
                     r = await js(f"(function(){{var r=document.getElementById('{i}').getBoundingClientRect();return [r.left,r.top+scrollY,r.width,r.height]}})()")
                     res = await cmd('Page.captureScreenshot', format='png', captureBeyondViewport=True, clip={'x': r[0], 'y': r[1], 'width': r[2], 'height': r[3], 'scale': 1})
                     open(os.path.join(a.photos, f'{i[2:]}-handy.png'), 'wb').write(base64.b64decode(res['data']))
+            # --- Achsenbeschriftungen duerfen sich bei schmaler Breite nicht ueberlappen (Balken mit Prozent-Einheit)
+            for w in (360, 390):
+                await load(w=w, h=800, scheme='light', mobile=True)
+                r = await js("""(async function(){var m=await import('./psorvia-charts.esm.js');var h=document.createElement('div');document.body.prepend(h);
+                  m.create(h,{type:'bars',baseline:100,baselineLabel:'SQLite = 100 %',unit:' %',digits:0,sides:['Base schneller','Base langsamer'],title:'t',
+                  categories:[{label:'Punktlesen nach Schluessel'},{label:'Aggregation'}],series:[{name:'x',values:[72,30]},{name:'y',values:[87,109]}]});
+                  await new Promise(function(r){setTimeout(r,1500)});var t=[].slice.call(h.querySelectorAll('.pc-tick')).map(function(e){var b=e.getBoundingClientRect();return [b.left,b.right,getComputedStyle(e).fontSize]});
+                  t.sort(function(x,y){return x[0]-y[0]});var bad=0;for(var i=1;i<t.length;i++)if(t[i][0]<t[i-1][1]+4)bad++;return {n:t.length,bad:bad,fs:Math.min.apply(0,t.map(function(x){return parseFloat(x[2])}))}})()""")
+                print('ticks', w, r); ok(r and r['n'] >= 2 and r['bad'] == 0, f'Achsenmarken ueberlappen bei {w} px: {r}')
+                ok(r and r['fs'] >= 13, f'Achsenschrift unter 13 px bei {w} px: {r}')
             ok(not errs, f'Skriptfehler: {errs[:3]}')
     finally:
         p.terminate(); shutil.rmtree(tmp, ignore_errors=True)

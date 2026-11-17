@@ -65,6 +65,15 @@ const st = niceStep(hi - lo, n), out = [];
 for (let v = Math.ceil(lo / st - 1e-9) * st; v <= hi + 1e-9; v += st) out.push(+v.toFixed(6));
 return { out, dec: st >= 1 ? 0 : st >= 0.1 ? 1 : 2 };
 }
+function fitTicks(lo, hi, pw, fmtT, max) {
+let tk;
+for (let n = max; n >= 2; n--) {
+tk = ticks(lo, hi, n);
+const w = Math.max.apply(0, tk.out.map(v => fmtT(v, tk.dec).length)) * 8.6 + 16;
+if (tk.out.length < 2 || pw / (tk.out.length - 1) >= w) return tk;
+}
+return tk;
+}
 function defs(svg, id, n) {
 const d = S('defs', {}, svg);
 for (let k = 0; k < n; k++) {
@@ -193,7 +202,7 @@ const tg = S('g', { class: 'pc-lab' }, g), n = wrap(tg, 0, 0, c.label, labW, 3, 
 const rh = Math.max(vs.length * (barH + 4) + 12, n * 17 + 12);
 rows.push({ y, rh, tg, n, i }); y += rh;
 });
-const tk = ticks(lo, hi, W < 480 ? 3 : 5), tf = fmtFactory(this.lang, tk.dec);
+const tk = fitTicks(lo, hi, b - a, (v, d) => fmtFactory(this.lang, d)(v) + this.u, W < 480 ? 3 : 5), tf = fmtFactory(this.lang, tk.dec);
 tk.out.forEach(v => {
 const x = X(v);
 S('line', { x1: x, x2: x, y1: top - 4, y2: y, class: 'pc-grid' }, g);

@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- Bar charts choose the number of axis marks by label width, so labels such as "40 %" no longer overlap on narrow screens.
+
 ## 1.1.0
 - New types: `pie` and `donut` (value and share on leader lines, small slices merged into "Other" from 7 slices on, total or average in the ring), `stacked` and `percent` bars, `area` and stacked area, `spark` (also inside tiles), and in the optional file `psorvia-charts.extra.js`: `scatter` (points and bubbles), `hist`, `gauge`, `heat` and `radar` (3 to 8 axes).
 - Two more series colours (`--pc-4`, `--pc-5`) and a fifth pattern in all four styles, light and dark.
