@@ -6,3 +6,4 @@
 - Four styles as CSS custom properties, light and dark; animation that follows reduced motion.
 - Keyboard use, `aria-live` readout, table view and number format per language.
 - Data from a schema.org Dataset in JSON-LD, from an HTML table or from plain JSON.
+- Value and side labels that would leave the chart are moved inside.
