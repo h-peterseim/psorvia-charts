@@ -29,6 +29,11 @@ t.removeChild(m);
 lines.forEach((l, i) => S('tspan', { x, dy: i ? '1.2em' : 0 }, t, l));
 return lines.length;
 }
+function fit(t, W) {
+const l = t.getComputedTextLength(), x = +t.getAttribute('x');
+if (t.getAttribute('text-anchor') !== 'end' && x + l > W - 2) t.setAttribute('x', Math.max(2, W - 2 - l));
+return t;
+}
 function niceStep(span, n) {
 const raw = span / n, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
 return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * p;
@@ -177,17 +182,17 @@ if (sp.baseline != null) {
 if (sp.baselineLabel) S('text', { x: bx, y: 12, 'text-anchor': 'middle', class: 'pc-blab' }, g, sp.baselineLabel);
 if (sp.sides) {
 S('text', { x: bx - 8, y: 31, 'text-anchor': 'end', class: 'pc-side' }, g, '◀ ' + sp.sides[0]);
-S('text', { x: bx + 8, y: 31, 'text-anchor': 'start', class: 'pc-side' }, g, sp.sides[1] + ' ▶');
+fit(S('text', { x: bx + 8, y: 31, 'text-anchor': 'start', class: 'pc-side' }, g, sp.sides[1] + ' ▶'), W);
 }
 }
 rows.forEach(r => vs.forEach((k, j) => {
 const v = sp.series[k].values[r.i], yy = r.y + 6 + j * (barH + 4), q = k % 4;
 const e = S('g', { class: 'pc-mk' }, g); S('rect', { x: 0, y: r.y, width: W, height: r.rh, class: 'pc-hit' }, e);
-if (v == null) S('text', { x: bx + 6, y: yy + 13, class: 'pc-val' }, e, this.L.na);
+if (v == null) fit(S('text', { x: bx + 6, y: yy + 13, class: 'pc-val' }, e, this.L.na), W);
 else {
 const xv = X(v), x = Math.min(xv, bx), w = Math.max(Math.abs(xv - bx), 2);
 const bar = S('rect', { x, y: yy, width: w, height: barH, class: 'pc-bar pc-o' + q, fill: `url(#${this.id}p${q})`, style: `transform-origin:${bx}px 0;--d:${(r.i * 3 + j) * 45}ms` }, e);
-S('text', { x: v >= base ? xv + 6 : xv - 6, y: yy + 13, 'text-anchor': v >= base ? 'start' : 'end', class: 'pc-val', style: `--d:${(r.i * 3 + j) * 45 + 300}ms` }, e, this.fmt(v) + this.u);
+fit(S('text', { x: v >= base ? xv + 6 : xv - 6, y: yy + 13, 'text-anchor': v >= base ? 'start' : 'end', class: 'pc-val', style: `--d:${(r.i * 3 + j) * 45 + 300}ms` }, e, this.fmt(v) + this.u), W);
 }
 this.items.push({ el: e, row: r.i, k, v, vi: j, y: r.y, rh: r.rh });
 }));
