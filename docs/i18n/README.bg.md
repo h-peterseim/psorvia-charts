@@ -1,0 +1,148 @@
+# PSOrvia Charts
+
+[![PSOrvia Charts](../preview.webp)](https://h-peterseim.github.io/psorvia-charts/demo.html)
+
+**Анимирани, достъпни диаграми за вашия уебсайт**
+
+### ▶ [Демо на живо](https://h-peterseim.github.io/psorvia-charts/demo.html)
+
+Колони около базова линия, групирани колони, линии, плочки с ключови показатели и изглед като таблица. Чист JavaScript и CSS без зависимости: стойностите стоят до маркерите, всяка диаграма работи с клавиатура, а при намалено движение нищо не се движи.
+
+## Използване
+
+```html
+<link rel="stylesheet" href="psorvia-charts.css">
+<script src="psorvia-charts.js"></script>
+<div id="speed"></div>
+<script>
+PsoCharts.create(document.getElementById('speed'), {
+  type: 'bars', title: 'Speed', baseline: 1, baselineLabel: 'Reference 1.0', sides: ['faster', 'slower'],
+  categories: [{ label: 'Read' }, { label: 'Write' }],
+  series: [{ name: 'Run A', values: [0.8, 1.2] }, { name: 'Run B', values: [0.7, 1.1] }]
+});
+</script>
+```
+
+```html
+<script type="module">
+import { create, auto } from './psorvia-charts.esm.js';
+auto();
+</script>
+```
+
+## Типове диаграми
+
+| `type` | Показва |
+|---|---|
+| `bars` | По една колона за стойност, растяща от базова линия (`baseline: 1` разделя по-бързото от по-бавното). Няколко серии дават групирани колони. |
+| `lines` | По една линия за серия през категориите, с етикет в края на линията. |
+| `tiles` | Плочки с ключови показатели с число, което се брои нагоре, маркер (▲ ▼ =) и кратък текст. |
+| `table` | Обикновена таблица. |
+
+`bars` и `lines` имат превключвател между диаграма и таблица, легенда, която скрива серии, и поле за отчитане под диаграмата.
+
+## Опции
+
+| Опция | По подразбиране | |
+|---|---|---|
+| `type` | | `bars`, `lines`, `tiles` или `table` |
+| `title` | | Заглавие на диаграмата, също и достъпно име |
+| `desc` | | Кратко описание под заглавието |
+| `categories` | | `[{ label, note }]`, `note` се показва в полето за отчитане и в таблицата |
+| `series` | | `[{ name, values }]`, `null` за липсваща стойност |
+| `baseline` | няма (bars: 0) | Еталонна стойност, начертана като линия |
+| `baselineLabel` | | Текст при базовата линия, например `Reference 1.0` |
+| `sides` | | `[below, above]`, имена на двете страни на базовата линия, изговарят се и в полето за отчитане |
+| `unit` | | Добавя се към всяко число, например `' ms'` |
+| `digits` | `2` | Десетични знаци |
+| `catHeader` | | Заглавие на първата колона на таблицата |
+| `source` | | Текст в долната част под диаграмата |
+| `legend` | `true` | `false` скрива легендата |
+| `zero` | `false` | Линии: включва 0 в оста на стойностите |
+| `labels` | английски | `{ chart, table, view, na, hint, keys }`, собствените ви формулировки |
+| `lang` | езикът на страницата | Формат на числата, чрез `Intl.NumberFormat` |
+| `style` | `house` | `house`, `gauge`, `plain` или `genre` |
+| `theme` | автоматично | `light` или `dark` за принудителен избор |
+| `motion` | автоматично | `off` изключва анимацията |
+| `items` | | Само за плочки: `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` е `good`, `bad` или `neutral` |
+
+## API
+
+- `PsoCharts.create(element, spec, options)` чертае диаграма в `element` и я връща. `options` приема `style`, `theme`, `motion` и `lang` като стойности по подразбиране за спецификацията.
+- `chart.set(spec)` заменя данните, `chart.show('chart' | 'table')` сменя изгледа, `chart.destroy()` я премахва.
+- `PsoCharts.auto(root)` чертае всеки `<div data-pso-chart>` в страницата. Атрибутът съдържа опциите като JSON, `data-chart-source="#id"` назовава източника на данни.
+- `PsoCharts.read(element)`, `fromLd(json, id)` и `fromTable(table)` превръщат източник на данни в спецификация.
+
+## Източници на данни
+
+Данните могат да идват от три места. Опции като `type` и `baseline` винаги отиват в атрибута `data-pso-chart`.
+
+**JSON-LD (schema.org Dataset).** Числата стоят в страницата като структурирани данни, които могат да четат и машини. Всяка серия е `PropertyValue` в `variableMeasured`; нейният `valueReference` изброява по един `PropertyValue` за категория с `name` и `value`:
+
+```html
+<script type="application/ld+json" id="data">
+{ "@context": "https://schema.org", "@type": "Dataset", "@id": "https://example.org/p#speed",
+  "name": "Speed", "creator": { "@type": "Organization", "name": "Example" },
+  "measurementTechnique": "Wall clock", "isBasedOn": { "@type": "SoftwareSourceCode", "name": "Example", "version": "1.2.0" },
+  "variableMeasured": [
+    { "@type": "PropertyValue", "name": "Run A", "unitText": "ratio",
+      "valueReference": [ { "@type": "PropertyValue", "name": "Read", "value": 0.8 }, { "@type": "PropertyValue", "name": "Write", "value": 1.2 } ] } ] }
+</script>
+<div data-pso-chart='{"type":"bars","baseline":1,"dataset":"https://example.org/p#speed"}' data-chart-source="#data"></div>
+<script>PsoCharts.auto();</script>
+```
+
+При няколко набора от данни в един `@graph`, `dataset` назовава `@id`, който да се ползва. Създателят, техниката и `isBasedOn` (с `version`) стават долен колонтитул. Описание (`description`) на стойност на категория става нейна бележка. Избрахме `PropertyValue`, защото е стабилен тип на schema.org; `Observation` там още е означен като чакащ.
+
+**HTML таблица.** Съществуваща таблица остава в страницата, със или без скрипт. Диаграмата се добавя до нея. Заглавията на колоните са сериите, заглавията на редовете са категориите, атрибут `data-value` на клетка съдържа точното число:
+
+```html
+<table id="t"><caption>Speed</caption>
+<thead><tr><th></th><th scope="col">Run A</th></tr></thead>
+<tbody><tr><th scope="row">Read</th><td data-value="0.8">0.80</td></tr></tbody></table>
+<div data-pso-chart='{"type":"bars"}' data-chart-source="#t"></div>
+```
+
+**Чист JSON.** Елемент `<script type="application/json">` със спецификацията (`categories`, `series`, ...) или спецификацията директно в `PsoCharts.create`.
+
+## Стилове и цветове
+
+Цветовете са CSS потребителски свойства на `.pc`, за светла и тъмна тема (системна настройка, `:root[data-theme]` или `data-pc-theme`):
+
+| Свойство | |
+|---|---|
+| `--pc-bg`, `--pc-fg`, `--pc-mut` | Фон, текст, второстепенен текст |
+| `--pc-grid`, `--pc-sep` | Линии на мрежата, разделители |
+| `--pc-0` до `--pc-3` | Цветове на сериите |
+| `--pc-good`, `--pc-bad` | Ръб на плочката за по-добро и по-лошо |
+| `--pc-cur` | Контур на избрания маркер |
+| `--pc-font`, `--pc-r` | Шрифт и радиус на ъглите |
+
+`data-pc-style` (или опцията `style`) избира един от четири набора: `house` (зелен), `gauge` (кехлибарен върху хартия или черно, моноширинен), `plain` (черно-бял с един акцент) и `genre` (топъл). Задайте свойствата на `.pc` или на отделна диаграма, за да ползвате свои.
+
+## Достъпност
+
+- Картината е `img` с етикет; под нея има зона за клавиатура: с Tab се стига до диаграмата, стрелките местят между маркерите, Home и End скачат, Escape отменя избора. Избраният маркер е очертан и се изговаря в област `aria-live`.
+- Всяка диаграма има изглед като таблица с правилни заглавия. Сериите се различават по шарка (колони) и форма (линии), не само по цвят; по-доброто и по-лошото при плочките - по маркер и дума.
+- Целият текст е най-малко 13 px и има контраст най-малко 4,5:1; маркерите имат най-малко 3:1. Тестовият набор проверява и четирите стила на светла и тъмна тема.
+- При намалено движение (системна настройка или `motion: 'off'`) колоните и линиите се чертаят веднага, а числата не се броят нагоре.
+
+## Производителност
+
+Около 23 KB скрипт и 8 KB CSS, около 10 KB компресирани заедно, без зависимости. Диаграмите се прерисуват само при промяна на ширината; анимацията използва CSS и започва, когато диаграмата се превърти в изгледа.
+
+## Тестове
+
+`python3 tools/build.py` изгражда трите файла от `src/`. `python3 tests/browser.py` отваря `demo.html` в Chromium без интерфейс (изисква пакета на Python `websockets`), проверява контраст, размер на шрифта, клавиатура, изглед като таблица и намалено движение, а `--photos <folder>` запазва снимки на екрана на светла и тъмна тема и при намалено движение.
+
+## Преводи
+
+[English](../../README.md) · [Deutsch](README.de.md) · [Български](README.bg.md) · [Čeština](README.cs.md) · [Dansk](README.da.md) · [Ελληνικά](README.el.md) · [Español](README.es.md) · [Eesti](README.et.md) · [Suomi](README.fi.md) · [Français](README.fr.md) · [Gaeilge](README.ga.md) · [Hrvatski](README.hr.md) · [Magyar](README.hu.md) · [Italiano](README.it.md) · [Lietuvių](README.lt.md) · [Latviešu](README.lv.md) · [Malti](README.mt.md) · [Nederlands](README.nl.md) · [Polski](README.pl.md) · [Português](README.pt.md) · [Română](README.ro.md) · [Slovenčina](README.sk.md) · [Slovenščina](README.sl.md) · [Svenska](README.sv.md)
+
+## Лиценз
+
+Кодът е с лиценз MIT (вижте [LICENSE](../../LICENSE)). Демонстрационните стойности са измислени (вижте [media/LICENSE.md](../../media/LICENSE.md)).
+
+SPDX-License-Identifier: MIT
+
+Създадено за [psorvia.io](https://psorvia.io).
