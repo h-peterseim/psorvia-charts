@@ -221,7 +221,7 @@ async def main():
                   m.create(h,{type:'bars',baseline:100,baselineLabel:'SQLite = 100 %',unit:' %',digits:0,sides:['Base schneller','Base langsamer'],title:'t',
                   categories:[{label:'Punktlesen nach Schluessel'},{label:'Aggregation'}],series:[{name:'x',values:[72,30]},{name:'y',values:[87,109]}]});
                   await new Promise(function(r){setTimeout(r,1500)});var t=[].slice.call(h.querySelectorAll('.pc-tick')).map(function(e){var b=e.getBoundingClientRect();return [b.left,b.right,getComputedStyle(e).fontSize]});
-                  t.sort(function(x,y){return x[0]-y[0]});var bad=0;for(var i=1;i<t.length;i++)if(t[i][0]<t[i-1][1]+4)bad++;return {n:t.length,bad:bad,fs:Math.min.apply(0,t.map(function(x){return parseFloat(x[2])}))}})()""")
+                  var sd=[].slice.call(h.querySelectorAll('.pc-side')).map(function(e){return e.getBoundingClientRect()});var sb=0;for(var a=0;a<sd.length;a++)for(var b=a+1;b<sd.length;b++)if(sd[a].left<sd[b].right-1&&sd[b].left<sd[a].right-1&&sd[a].top<sd[b].bottom-1&&sd[b].top<sd[a].bottom-1)sb++;t.sort(function(x,y){return x[0]-y[0]});var bad=sb;for(var i=1;i<t.length;i++)if(t[i][0]<t[i-1][1]+4)bad++;return {n:t.length,bad:bad,fs:Math.min.apply(0,t.map(function(x){return parseFloat(x[2])}))}})()""")
                 print('ticks', w, r); ok(r and r['n'] >= 2 and r['bad'] == 0, f'Achsenmarken ueberlappen bei {w} px: {r}')
                 ok(r and r['fs'] >= 13, f'Achsenschrift unter 13 px bei {w} px: {r}')
             ok(not errs, f'Skriptfehler: {errs[:3]}')

@@ -195,7 +195,8 @@ vs.forEach(k => sp.series[k].values.forEach(v => { if (v != null) { lo = Math.mi
 if (hi - lo < 0.2) { lo -= 0.1; hi += 0.1; }
 let ml = 4; vs.forEach(k => sp.series[k].values.forEach(v => { if (v != null) ml = Math.max(ml, (this.fmt(v) + this.u).length); }));
 const res = Math.ceil(ml * 8.6 + 12), a = x0 + res, b = x1 - res, X = v => a + (v - lo) / (hi - lo) * (b - a), bx = X(base);
-const top = sp.baseline != null ? 40 : 8, barH = 17, g = S('g', {}, svg);
+const narrow = sp.baseline != null && sp.sides && bx + 8 + (sp.sides[1].length + 2) * 7.8 > W - 2;
+const top = sp.baseline != null ? (narrow ? 58 : 40) : 8, barH = 17, g = S('g', {}, svg);
 const rows = []; let y = top;
 sp.categories.forEach((c, i) => {
 const tg = S('g', { class: 'pc-lab' }, g), n = wrap(tg, 0, 0, c.label, labW, 3, 'start');
@@ -217,7 +218,8 @@ if (sp.baseline != null) {
 if (sp.baselineLabel) S('text', { x: bx, y: 12, 'text-anchor': 'middle', class: 'pc-blab' }, g, sp.baselineLabel);
 if (sp.sides) {
 S('text', { x: bx - 8, y: 31, 'text-anchor': 'end', class: 'pc-side' }, g, '◀ ' + sp.sides[0]);
-fit(S('text', { x: bx + 8, y: 31, 'text-anchor': 'start', class: 'pc-side' }, g, sp.sides[1] + ' ▶'), W);
+if (narrow) S('text', { x: W - 2, y: 49, 'text-anchor': 'end', class: 'pc-side' }, g, sp.sides[1] + ' ▶');
+else fit(S('text', { x: bx + 8, y: 31, 'text-anchor': 'start', class: 'pc-side' }, g, sp.sides[1] + ' ▶'), W);
 }
 }
 rows.forEach(r => vs.forEach((k, j) => {
