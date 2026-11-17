@@ -4,7 +4,7 @@
 
 PSOrvia · [psorvia.io](https://psorvia.io)
 
-### ▶ [Otsedemo](https://h-peterseim.github.io/psorvia-charts/demo.html)
+### ▶ [Otsedemo](https://h-peterseim.github.io/psorvia-charts/)
 
 Tulbad, jooned, sektor- ja rõngasdiagramm, virnastatud ja 100 % tulbad, alad, punkt- ja mulldiagramm, histogramm, sparkline, ketasnäidik, kuumakaart, radar, võtenumbrite paanid ja tabelivaade. Puhas JavaScript ja CSS ilma sõltuvusteta: väärtused asuvad märkide kõrval, iga diagramm töötab klaviatuuriga ja vähendatud liikumise korral ei liigu miski.
 

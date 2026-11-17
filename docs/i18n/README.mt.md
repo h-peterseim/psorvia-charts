@@ -4,7 +4,7 @@
 
 PSOrvia · [psorvia.io](https://psorvia.io)
 
-### ▶ [Demo ħajja](https://h-peterseim.github.io/psorvia-charts/demo.html)
+### ▶ [Demo ħajja](https://h-peterseim.github.io/psorvia-charts/)
 
 Vireg, linji, pie u ring, vireg impilati u ta' 100 %, erjas, scatter u bubbles, histogram, sparkline, gauge, heatmap, radar, tiles taċ-ċifri ewlenin u veduta ta' tabella. JavaScript u CSS sempliċi mingħajr dipendenzi: il-valuri jinsabu ħdejn il-marki, kull chart jaħdem bit-tastiera, u b'moviment imnaqqas xejn ma jiċċaqlaq.
 

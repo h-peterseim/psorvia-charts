@@ -1,4 +1,4 @@
-/*! PSOrvia Charts 1.1.0 | MIT | Petit Souris */
+/*! PSOrvia Charts 1.1.1 | MIT | Petit Souris */
 const NS = 'http://www.w3.org/2000/svg';
 let uid = 0;
 const S = (t, a, p, x) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (x != null) e.textContent = x; if (p) p.appendChild(e); return e; };
@@ -12,9 +12,14 @@ const MARK = ['circle', 'square', 'diamond', 'triangle'];
 const TY = { bars: 'bars', stacked: 'stack', percent: 'stack', lines: 'lines', area: 'lines', pie: 'pie', donut: 'pie' }, PREP = {}, CHK = {};
 const LEG = { bars: 1, stacked: 1, percent: 1, lines: 1, area: 1 };
 function pctFactory(lang) { let f; try { f = new Intl.NumberFormat(lang, { style: 'percent', maximumFractionDigits: 1 }); } catch (e) { f = new Intl.NumberFormat('en', { style: 'percent', maximumFractionDigits: 1 }); } return f.format.bind(f); }
+const num = v => { if (v == null || v === '') return null; const n = typeof v === 'number' ? v : Number(v); return isFinite(n) ? n : null; };
 function norm(sp) {
+  if (sp.title == null) sp.title = '';
   if (sp.values && !sp.series) { sp.series = [{ name: sp.title || '', values: sp.values }]; if (!sp.categories) sp.categories = sp.values.map((v, i) => ({ label: '#' + (i + 1) })); }
   if (sp.value != null && !sp.series) { sp.categories = [{ label: sp.label || '' }]; sp.series = [{ name: sp.title || '', values: [sp.value] }]; }
+  if (Array.isArray(sp.series)) { if (!sp.categories) sp.categories = []; sp.series.forEach(r => { r.values = Array.isArray(r.values) ? r.values.map(num) : []; }); }
+  else if (sp.type !== 'tiles') { sp.series = []; if (!sp.categories) sp.categories = []; }
+  if (Array.isArray(sp.items)) sp.items.forEach(it => { it.value = num(it.value); });
   return sp;
 }
 function setup(h, sp, o, cls) {
@@ -420,15 +425,15 @@ function Tiles(host, spec, opt) {
   this.host = host; opt = opt || {}; const lang = setup(host, spec, opt, 'pc-tilebox');
   if (spec.title) H('h3', { class: 'pc-title' }, host, spec.title);
   const ul = H('ul', { class: 'pc-tiles' }, host), anim = [];
-  spec.items.forEach(it => {
+  (spec.items || []).forEach(it => {
     const f = fmtFactory(lang, it.digits != null ? it.digits : 2), li = H('li', { class: 'pc-tile pc-tone-' + (it.tone || 'neutral') }, ul);
     H('span', { class: 'pc-tl' }, li, it.label);
-    const txt = f(it.value) + (it.unit || ''), v = H('b', { class: 'pc-tv', 'aria-hidden': 'true' }, li, txt);
+    const txt = it.value == null ? DEF.na : f(it.value) + (it.unit || ''), v = H('b', { class: 'pc-tv', 'aria-hidden': 'true' }, li, txt);
     H('span', { class: 'pc-sr' }, li, txt);
     const sub = H('span', { class: 'pc-ts' }, li);
     if (it.mark) H('span', { class: 'pc-tm', 'aria-hidden': 'true' }, sub, it.mark + ' ');
     sub.appendChild(document.createTextNode(it.sub || ''));
-    anim.push([v, it.value, f, it.unit || '']);
+    if (it.value != null) anim.push([v, it.value, f, it.unit || '']);
     if (it.spark) new Spark(H('span', { class: 'pc-ts' }, li), { type: 'spark', values: it.spark, title: it.label, lang, style: spec.style || opt.style, theme: spec.theme || opt.theme, motion: spec.motion || opt.motion }, {});
   });
   const run = () => {
@@ -445,6 +450,7 @@ function Spark(host, spec, opt) {
   this.host = host; opt = opt || {}; norm(spec); const lang = setup(host, spec, opt, 'pc-spark'), s0 = spec.series[0], vals = s0.values, n = vals.length;
   const f = fmtFactory(lang, spec.digits != null ? spec.digits : 2), u = spec.unit || '', w = spec.width || 120, h = spec.height || 32, pad = 5, lab = i => (spec.categories && spec.categories[i] ? spec.categories[i].label + ': ' : '');
   const nums = vals.filter(v => v != null); let lo = Math.min.apply(0, nums), hi = Math.max.apply(0, nums); if (hi - lo < 1e-9) { lo -= 1; hi += 1; }
+  if (!nums.length) { H('b', { class: 'pc-spv' }, host, DEF.na); host.setAttribute('role', 'img'); host.setAttribute('aria-label', (spec.title || '') + ' ' + DEF.na); return; }
   const X = i => pad + i * (w - 2 * pad) / Math.max(1, n - 1), Y = v => h - pad - (v - lo) / (hi - lo) * (h - 2 * pad), pts = vals.map((v, i) => v == null ? null : [X(i), Y(v), i]).filter(Boolean);
   host.setAttribute('role', 'group'); host.setAttribute('tabindex', '0'); host.setAttribute('aria-roledescription', 'chart'); host.setAttribute('aria-label', (spec.title || '') + '. ' + (spec.keys || DEF.keys));
   const svg = S('svg', { width: w, height: h, viewBox: '0 0 ' + w + ' ' + h, 'aria-hidden': 'true', focusable: 'false', class: 'pc-spk' }, host), d = pts.map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join('L');
@@ -482,6 +488,7 @@ function Tab(host, spec, opt) {
   });
 }
 
+if (typeof window !== 'undefined' && window.addEventListener) window.addEventListener('beforeprint', () => document.querySelectorAll('.pc').forEach(e => e.classList.add('pc-in')));
 export function create(host, spec, opt) {
   const t = spec.type; norm(spec);
   if (t === 'tiles') return new Tiles(host, spec, opt);
@@ -538,5 +545,5 @@ export function auto(root, opt) {
   });
   return out;
 }
-export const version = '1.1.0';
+export const version = '1.1.1';
 export const kit = { S, H, wrap, fit, ticks, niceStep, clamp, fmtFactory, marker, vis, fin, MARK, TY, LEG, PREP, CHK, Chart };

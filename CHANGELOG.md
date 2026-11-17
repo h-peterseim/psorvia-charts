@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased
+## 1.1.1
+- Empty, non-finite (NaN, Infinity) and text values are shown as "n/a" instead of "NaN" or "null"; a chart without a title no longer shows "undefined".
+- No more errors for empty histograms, empty sparklines, tiles without items or a chart without series; histograms accept very large data sets (200,000 values and more).
+- Printing shows all charts in their final state, also those that were never scrolled into view.
+- Demo page `index.html` for GitHub Pages: every chart type live, four styles in light and dark, code to copy for each example, 24 languages.
 - Bar charts choose the number of axis marks by label width, so labels such as "40 %" no longer overlap on narrow screens.
 
 ## 1.1.0

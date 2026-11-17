@@ -4,7 +4,7 @@
 
 PSOrvia · [psorvia.io](https://psorvia.io)
 
-### ▶ [Élő demó](https://h-peterseim.github.io/psorvia-charts/demo.html)
+### ▶ [Élő demó](https://h-peterseim.github.io/psorvia-charts/)
 
 Oszlopok, vonalak, kör- és gyűrűdiagram, halmozott és 100 %-os oszlopok, területek, pont- és buborékdiagram, hisztogram, sparkline, mérőóra, hőtérkép, radardiagram, kulcsszám-csempék és táblázatnézet. Tiszta JavaScript és CSS függőségek nélkül: az értékek a jelölők mellett állnak, minden diagram használható billentyűzettel, és csökkentett mozgásnál semmi sem mozog.
 

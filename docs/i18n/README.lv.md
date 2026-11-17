@@ -4,7 +4,7 @@
 
 PSOrvia · [psorvia.io](https://psorvia.io)
 
-### ▶ [Demonstrācija tiešsaistē](https://h-peterseim.github.io/psorvia-charts/demo.html)
+### ▶ [Demonstrācija tiešsaistē](https://h-peterseim.github.io/psorvia-charts/)
 
 Joslas, līnijas, sektoru un gredzena diagrammas, sakrautas un 100 % joslas, laukumi, izkliedes un burbuļu diagrammas, histogramma, mazā līnija, mērierīce, siltuma karte, radars, galveno rādītāju flīzes un tabulas skats. Tīrs JavaScript un CSS bez atkarībām: vērtības atrodas blakus atzīmēm, katra diagramma darbojas ar tastatūru, un ar samazinātu kustību nekas nekustas.
 

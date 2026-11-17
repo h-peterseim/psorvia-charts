@@ -1,5 +1,5 @@
 (function(g){
-/*! PSOrvia Charts extra types 1.1.0 | MIT | Petit Souris */
+/*! PSOrvia Charts extra types 1.1.1 | MIT | Petit Souris */
 const kit=g.PsoCharts.kit;
 const { S, wrap, ticks, niceStep, clamp, fmtFactory, marker, vis, fin, MARK, TY, LEG, PREP, CHK, Chart } = kit;
 const rgb = c => { c = c.trim(); let m = /^#([\da-f]{3}|[\da-f]{6})$/i.exec(c); if (m) { let h = m[1]; if (h.length === 3) h = h.replace(/./g, '$&$&'); return [0, 2, 4].map(i => parseInt(h.substr(i, 2), 16)); } m = c.match(/[\d.]+/g); return m ? m.slice(0, 3).map(Number) : [0, 0, 0]; };
@@ -13,7 +13,7 @@ CHK.scatter = sp => { if (sp.series.length < 2) throw new Error('PsoCharts: scat
 Object.assign(TY, { scatter: 'scatter', hist: 'hist', heat: 'heat', gauge: 'gauge', radar: 'radar' }); LEG.radar = 1;
 PREP.hist = function () {
 const sp = this.spec;
-const v = this.spec.series[0].values.filter(x => x != null && isFinite(x)), lo = Math.min.apply(0, v), hi = Math.max.apply(0, v);
+const v = this.spec.series[0].values.filter(x => x != null && isFinite(x)), lo = v.reduce((a, x) => x < a ? x : a, v.length ? v[0] : 0), hi = v.reduce((a, x) => x > a ? x : a, v.length ? v[0] : 0);
 const st = sp.binWidth || niceStep(hi - lo || 1, sp.bins || clamp(Math.ceil(Math.sqrt(v.length)), 4, 12)), a = Math.floor(lo / st + 1e-9) * st, nb = Math.max(1, Math.ceil((hi - a) / st - 1e-9));
 const f = fmtFactory(this.lang, Math.min(4, Math.max(0, Math.ceil(-Math.log10(st) + 1e-9)))), b = [];
 for (let i = 0; i < nb; i++) b.push({ lo: a + i * st, hi: a + (i + 1) * st, v: 0, t: f(a + i * st) + '–' + f(a + (i + 1) * st) + this.u });

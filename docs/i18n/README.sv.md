@@ -4,7 +4,7 @@
 
 PSOrvia · [psorvia.io](https://psorvia.io)
 
-### ▶ [Livedemo](https://h-peterseim.github.io/psorvia-charts/demo.html)
+### ▶ [Livedemo](https://h-peterseim.github.io/psorvia-charts/)
 
 Staplar, linjer, cirkel- och ringdiagram, staplade och 100-procentsstaplar, ytor, punkt- och bubbeldiagram, histogram, sparkline, mätare, värmekarta, radar, brickor med nyckeltal och en tabellvy. Ren JavaScript och CSS utan beroenden: värdena står intill markeringarna, varje diagram fungerar med tangentbord, och vid reducerad rörelse rör sig ingenting.
 

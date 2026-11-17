@@ -137,3 +137,4 @@
 @keyframes pc-draw{to{stroke-dashoffset:0}}
 @keyframes pc-rise{from{opacity:0;transform:translateY(8px)}}
 @media (forced-colors:active){.pc-bar,.pc-line{forced-color-adjust:none}}
+@media print{.pc *{animation-duration:0s !important;animation-delay:0s !important}.pc-view,.pc-plot{break-inside:avoid}.pc-view{display:none}}

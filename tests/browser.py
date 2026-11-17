@@ -224,6 +224,18 @@ async def main():
                   var sd=[].slice.call(h.querySelectorAll('.pc-side')).map(function(e){return e.getBoundingClientRect()});var sb=0;for(var a=0;a<sd.length;a++)for(var b=a+1;b<sd.length;b++)if(sd[a].left<sd[b].right-1&&sd[b].left<sd[a].right-1&&sd[a].top<sd[b].bottom-1&&sd[b].top<sd[a].bottom-1)sb++;t.sort(function(x,y){return x[0]-y[0]});var bad=sb;for(var i=1;i<t.length;i++)if(t[i][0]<t[i-1][1]+4)bad++;return {n:t.length,bad:bad,fs:Math.min.apply(0,t.map(function(x){return parseFloat(x[2])}))}})()""")
                 print('ticks', w, r); ok(r and r['n'] >= 2 and r['bad'] == 0, f'Achsenmarken ueberlappen bei {w} px: {r}')
                 ok(r and r['fs'] >= 13, f'Achsenschrift unter 13 px bei {w} px: {r}')
+            # --- Randfaelle: leere, nicht endliche und Text-Werte duerfen weder werfen noch NaN/null/undefined anzeigen
+            await load(w=900, h=800, scheme='light')
+            r = await js("""(async function(){var m=await import('./psorvia-charts.esm.js');await import('./psorvia-charts.extra.esm.js');var C=[{label:'A'},{label:'B'},{label:'C'}],out=[];
+              var cs=[{type:'bars',categories:C},{type:'bars',categories:C,series:[{name:'x',values:[NaN,'3','a']}]},{type:'lines',categories:C,series:[{name:'x',values:[null,null,null]}]},
+               {type:'hist',values:[]},{type:'hist',values:Array.from({length:200000},function(_,i){return Math.sin(i)*50})},{type:'spark',values:[]},{type:'spark',values:[1,NaN,3]},
+               {type:'tiles',items:[{label:'a',value:NaN},{label:'b',value:null}]},{type:'tiles'},{type:'pie',categories:C,series:[{name:'x',values:[0,0,0]}]},
+               {type:'scatter',categories:[],series:[{name:'x',values:[]},{name:'y',values:[]}]},{type:'gauge',categories:C,series:[{name:'x',values:[null,NaN,50]}]}];
+              cs.forEach(function(c,i){var h=document.createElement('div');document.body.prepend(h);try{m.create(h,c,{motion:'off'})}catch(e){out.push(i+' wirft '+e.message)}});
+              await new Promise(function(r){setTimeout(r,1500)});
+              cs.forEach(function(c,i){});[].slice.call(document.querySelectorAll('.pc')).slice(0,cs.length).forEach(function(h){var t=h.textContent;if(/NaN|Infinity|undefined|\bnull\b/.test(t))out.push(h.getAttribute('data-pc-type')+' zeigt '+(t.match(/.{0,15}(NaN|Infinity|undefined|null).{0,8}/)||[''])[0])});
+              return out})()""")
+            ok(r == [], f'Randfaelle: {r}')
             ok(not errs, f'Skriptfehler: {errs[:3]}')
     finally:
         p.terminate(); shutil.rmtree(tmp, ignore_errors=True)

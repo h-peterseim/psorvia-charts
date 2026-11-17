@@ -4,7 +4,7 @@
 
 PSOrvia · [psorvia.io](https://psorvia.io)
 
-### ▶ [Demo na żywo](https://h-peterseim.github.io/psorvia-charts/demo.html)
+### ▶ [Demo na żywo](https://h-peterseim.github.io/psorvia-charts/)
 
 Słupki, linie, wykresy kołowy i pierścieniowy, słupki skumulowane i 100 %, obszary, wykresy punktowy i bąbelkowy, histogram, sparkline, wskaźnik, mapa cieplna, radar, kafelki z kluczowymi liczbami i widok tabeli. Czysty JavaScript i CSS bez zależności: wartości stoją obok znaczników, każdy wykres działa z klawiaturą, a przy ograniczonym ruchu nic się nie porusza.
 

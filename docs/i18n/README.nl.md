@@ -4,7 +4,7 @@
 
 PSOrvia · [psorvia.io](https://psorvia.io)
 
-### ▶ [Live-demo](https://h-peterseim.github.io/psorvia-charts/demo.html)
+### ▶ [Live-demo](https://h-peterseim.github.io/psorvia-charts/)
 
 Staven, lijnen, taart en ring, gestapelde en 100 %-staven, vlakken, spreiding en bellen, histogram, sparkline, meter, heatmap, radar, tegels met kerncijfers en een tabelweergave. Gewoon JavaScript en CSS zonder afhankelijkheden: de waarden staan naast de markeringen, elke grafiek werkt met het toetsenbord en bij beperkte beweging beweegt er niets.
 

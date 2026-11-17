@@ -4,7 +4,7 @@
 
 PSOrvia · [psorvia.io](https://psorvia.io)
 
-### ▶ [Live-demo](https://h-peterseim.github.io/psorvia-charts/demo.html)
+### ▶ [Live-demo](https://h-peterseim.github.io/psorvia-charts/)
 
 Søjler, linjer, cirkel og ring, stablede og 100 %-søjler, arealer, punktdiagram og bobler, histogram, sparkline, urskive, varmekort, radar, nøgletalsfliser og en tabelvisning. Almindeligt JavaScript og CSS uden afhængigheder: værdierne står ved siden af mærkerne, alle diagrammer virker med tastaturet, og med reduceret bevægelse bevæger intet sig.
 

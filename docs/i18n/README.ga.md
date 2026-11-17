@@ -4,7 +4,7 @@
 
 PSOrvia · [psorvia.io](https://psorvia.io)
 
-### ▶ [Taispeáint bheo](https://h-peterseim.github.io/psorvia-charts/demo.html)
+### ▶ [Taispeáint bheo](https://h-peterseim.github.io/psorvia-charts/)
 
 Barraí, línte, cairteacha pióg agus fáinní, barraí cruachta agus 100 %, achair, scaipchairteacha agus builíní, histeagram, sparkline, tomhsaire, léarscáil teasa, cairt radair, tíleanna príomhfhigiúirí agus amharc tábla. JavaScript agus CSS simplí gan spleáchais: tá na luachanna taobh leis na marcanna, oibríonn gach cairt leis an méarchlár, agus le gluaiseacht laghdaithe ní bhogann aon rud.
 

@@ -4,7 +4,7 @@
 
 PSOrvia · [psorvia.io](https://psorvia.io)
 
-### ▶ [Živá ukážka](https://h-peterseim.github.io/psorvia-charts/demo.html)
+### ▶ [Živá ukážka](https://h-peterseim.github.io/psorvia-charts/)
 
 Stĺpce, čiary, koláčové a prstencové grafy, skladané a 100 % stĺpce, plochy, bodové a bublinové grafy, histogram, sparkline, ciferník, teplotná mapa, radar, dlaždice s kľúčovými číslami a tabuľkové zobrazenie. Čistý JavaScript a CSS bez závislostí: hodnoty sú vedľa značiek, každý graf funguje s klávesnicou a pri obmedzenom pohybe sa nič nehýbe.
 

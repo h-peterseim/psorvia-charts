@@ -4,7 +4,7 @@
 
 PSOrvia · [psorvia.io](https://psorvia.io)
 
-### ▶ [Live-demo](https://h-peterseim.github.io/psorvia-charts/demo.html)
+### ▶ [Live-demo](https://h-peterseim.github.io/psorvia-charts/)
 
 Pylväät, viivat, ympyrä- ja rengaskaaviot, pinotut ja 100 %:n pylväät, alueet, pistejoukot ja kuplat, histogrammi, sparkline, mittari, lämpökartta, tutkakaavio, tunnuslukulaatat ja taulukkonäkymä. Pelkkää JavaScriptiä ja CSS:ää ilman riippuvuuksia: arvot ovat merkkien vieressä, jokainen kaavio toimii näppäimistöllä, ja vähennetyllä liikkeellä mikään ei liiku.
 

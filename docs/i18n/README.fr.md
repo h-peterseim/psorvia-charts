@@ -4,7 +4,7 @@
 
 PSOrvia · [psorvia.io](https://psorvia.io)
 
-### ▶ [Démo en direct](https://h-peterseim.github.io/psorvia-charts/demo.html)
+### ▶ [Démo en direct](https://h-peterseim.github.io/psorvia-charts/)
 
 Barres, courbes, secteurs et anneaux, barres empilées et à 100 %, aires, nuages de points et bulles, histogramme, sparkline, jauge, carte de chaleur, radar, tuiles de chiffres clés et vue en tableau. JavaScript et CSS purs, sans dépendances : les valeurs se trouvent à côté des repères, chaque graphique fonctionne au clavier, et avec la réduction des animations plus rien ne bouge.
 

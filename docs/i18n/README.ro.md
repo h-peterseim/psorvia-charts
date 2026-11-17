@@ -4,7 +4,7 @@
 
 PSOrvia · [psorvia.io](https://psorvia.io)
 
-### ▶ [Demonstrație live](https://h-peterseim.github.io/psorvia-charts/demo.html)
+### ▶ [Demonstrație live](https://h-peterseim.github.io/psorvia-charts/)
 
 Bare, linii, grafice circulare și inel, bare suprapuse și de 100 %, arii, puncte și bule, histogramă, sparkline, cadran, hartă termică, radar, plăci cu cifre-cheie și o vizualizare ca tabel. JavaScript și CSS simplu, fără dependențe: valorile stau lângă marcaje, fiecare grafic funcționează cu tastatura, iar cu mișcare redusă nu se mișcă nimic.
 

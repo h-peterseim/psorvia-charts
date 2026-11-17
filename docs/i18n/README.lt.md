@@ -4,7 +4,7 @@
 
 PSOrvia · [psorvia.io](https://psorvia.io)
 
-### ▶ [Demonstracija gyvai](https://h-peterseim.github.io/psorvia-charts/demo.html)
+### ▶ [Demonstracija gyvai](https://h-peterseim.github.io/psorvia-charts/)
 
 Stulpeliai, linijos, skritulinė ir žiedinė diagramos, sukrautieji ir 100 % stulpeliai, plotai, sklaidos ir burbulų diagramos, histograma, mažoji linija, matuoklis, šilumos žemėlapis, radaras, pagrindinių rodiklių plytelės ir lentelės rodinys. Grynas JavaScript ir CSS be priklausomybių: reikšmės rodomos šalia žymių, kiekviena diagrama veikia su klaviatūra, o esant sumažintam judesiui niekas nejuda.
 

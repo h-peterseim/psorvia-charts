@@ -4,7 +4,7 @@
 
 PSOrvia · [psorvia.io](https://psorvia.io)
 
-### ▶ [Live demo](https://h-peterseim.github.io/psorvia-charts/demo.html)
+### ▶ [Live demo](https://h-peterseim.github.io/psorvia-charts/)
 
 Bars, lines, pie and ring, stacked and 100 % bars, areas, scatter and bubbles, histogram, sparkline, gauge, heatmap, radar, key-figure tiles and a table view. Plain JavaScript and CSS without dependencies: the values sit next to the marks, every chart works with the keyboard, and with reduced motion nothing moves.
 

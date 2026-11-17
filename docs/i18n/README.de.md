@@ -4,7 +4,7 @@
 
 PSOrvia · [psorvia.io](https://psorvia.io)
 
-### ▶ [Live-Demo](https://h-peterseim.github.io/psorvia-charts/demo.html)
+### ▶ [Live-Demo](https://h-peterseim.github.io/psorvia-charts/)
 
 Balken, Linien, Kreis- und Ringdiagramme, gestapelte und 100-%-Balken, Flächen, Streu- und Blasendiagramme, Histogramm, Sparkline, Tacho, Heatmap, Radar, Kennzahl-Kacheln und eine Tabellenansicht. Reines JavaScript und CSS ohne Abhängigkeiten: Die Werte stehen neben den Marken, jedes Diagramm funktioniert mit der Tastatur, und bei reduzierter Bewegung bewegt sich nichts.
 

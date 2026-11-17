@@ -4,7 +4,7 @@
 
 PSOrvia · [psorvia.io](https://psorvia.io)
 
-### ▶ [Predstavitev v živo](https://h-peterseim.github.io/psorvia-charts/demo.html)
+### ▶ [Predstavitev v živo](https://h-peterseim.github.io/psorvia-charts/)
 
 Stolpci, črte, tortni in obročni grafikoni, naloženi in 100-odstotni stolpci, ploskve, točkovni in mehurčkasti grafikoni, histogram, sparkline, merilnik, toplotni zemljevid, radar, ploščice s ključnimi številkami in tabelarični pogled. Čisti JavaScript in CSS brez odvisnosti: vrednosti so ob oznakah, vsak grafikon deluje s tipkovnico, pri zmanjšanem gibanju pa se nič ne premika.
 
