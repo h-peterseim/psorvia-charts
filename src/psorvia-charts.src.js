@@ -46,14 +46,23 @@ function fmtFactory(lang, d) {
 /* Text mit Umbruch nach gemessener Breite; gibt die Zeilenzahl zurueck */
 function wrap(parent, x, y, text, maxW, maxLines, anchor, cls) {
   const t = S('text', { x, y, 'text-anchor': anchor || 'start', class: cls || '' }, parent);
-  const m = S('tspan', {}, t);
-  const words = String(text).split(/\s+/); const lines = []; let cur = '';
-  for (const w of words) {
-    const test = cur ? cur + ' ' + w : w; m.textContent = test;
-    if (cur && m.getComputedTextLength() > maxW) { lines.push(cur); cur = w; } else cur = test;
+  const m = S('tspan', {}, t), len = q => (m.textContent = q, m.getComputedTextLength());
+  const words = String(text).split(/\s+/); let lines = []; let cur = '';
+  for (let w of words) {
+    while (len(w) > maxW && w.length > 1) {
+      let k = w.length - 1; while (k > 1 && len(w.slice(0, k)) > maxW) k--;
+      if (cur) { lines.push(cur); cur = ''; }
+      lines.push(w.slice(0, k)); w = w.slice(k);
+    }
+    const test = cur ? cur + ' ' + w : w;
+    if (cur && len(test) > maxW) { lines.push(cur); cur = w; } else cur = test;
   }
   lines.push(cur);
-  if (lines.length > maxLines) { const rest = lines.splice(maxLines - 1).join(' '); lines.push(rest); }
+  if (lines.length > maxLines) {
+    let last = lines.splice(maxLines - 1).join(' ');
+    if (len(last) > maxW) { while (last.length > 1 && len(last + '\u2026') > maxW) last = last.slice(0, -1); last += '\u2026'; }
+    lines.push(last);
+  }
   t.removeChild(m);
   lines.forEach((l, i) => S('tspan', { x, dy: i ? '1.2em' : 0 }, t, l));
   return lines.length;
@@ -113,7 +122,7 @@ function Chart(host, spec, opt) {
 }
 Chart.prototype.set = function (spec) {
   const o = this.opt, h = this.host;
-  this.spec = spec; this.L = Object.assign({}, DEF, spec.labels); this.lang = spec.lang || o.lang || document.documentElement.lang || 'en';
+  this.spec = spec; this.L = Object.assign({}, DEF, o.labels, spec.labels); this.lang = spec.lang || o.lang || document.documentElement.lang || 'en';
   this.fmt = fmtFactory(this.lang, spec.digits != null ? spec.digits : 2); this.pc = pctFactory(this.lang);
   this.u = spec.unit || ''; this.hidden.clear(); this.cur = null;
   setup(h, spec, o); this.prep();
@@ -339,7 +348,7 @@ Chart.prototype.stack = function (svg, W) {
 };
 Chart.prototype.pie = function (svg, W) {
   const sp = this.spec, sl = this.sl, tot = sl.reduce((q, x) => q + x.v, 0) || 1, dn = sp.type === 'donut', g = S('g', {}, svg), id = this.id;
-  const labW = clamp(W * 0.24, 110, 200), wide = (W - 2 * (labW + 30)) / 2 >= 90, R = wide ? clamp((W - 2 * (labW + 30)) / 2, 90, 150) : Math.min(W / 2 - 12, 120), cx = W / 2, cy = R + 14, r0 = dn ? R * 0.58 : 0;
+  const labW = clamp(W * 0.27, 110, 210), Rw = W / 2 - 44 - labW, wide = Rw >= 76, R = wide ? Math.min(Rw, 150) : Math.min(W / 2 - 12, 120), cx = W / 2, cy = R + 14, r0 = dn ? R * 0.58 : 0;
   const P = (r, a) => [cx + r * Math.cos(a), cy + r * Math.sin(a)];
   const m = S('mask', { id: id + 'm', maskUnits: 'userSpaceOnUse', x: -W, y: -W, width: 3 * W, height: 4 * W }, S('defs', {}, svg));
   S('circle', { cx, cy, r: R / 2 + 10, fill: 'none', stroke: '#fff', 'stroke-width': R + 20, pathLength: 1, class: 'pc-sw', transform: `rotate(-90 ${cx} ${cy})` }, m);
@@ -360,7 +369,7 @@ Chart.prototype.pie = function (svg, W) {
       let prev = 4; const ls = lab.filter(l => (Math.cos(l.am) >= 0 ? 0 : 1) === side).sort((p, q) => Math.sin(p.am) - Math.sin(q.am));
       ls.forEach(l => {
         const fi = S('g', { class: 'pc-fi', style: `--d:${600}ms` }, l.e), tg = S('g', {}, fi), lx = side ? cx - R - 40 : cx + R + 40, an = side ? 'end' : 'start';
-        const n = wrap(tg, lx, 0, l.x.label, labW, 2, an), hh = (n + 1) * 17;
+        const n = wrap(tg, lx, 0, l.x.label, labW, 4, an), hh = (n + 1) * 17;
         S('text', { x: lx, y: n * 17, 'text-anchor': an, class: 'pc-val' }, tg, l.vt);
         const yy = Math.max(cy + Math.sin(l.am) * (R + 16) - hh / 2, prev); tg.setAttribute('transform', `translate(0,${yy + 13})`); prev = yy + hh + 8; H2 = Math.max(H2, prev);
         const [p1, p2] = P(R + 3, l.am), [p3, p4] = P(R + 18, l.am);
@@ -370,7 +379,7 @@ Chart.prototype.pie = function (svg, W) {
   } else {
     let y = cy + R + 20;
     lab.forEach(l => {
-      const fi = S('g', { class: 'pc-fi', style: '--d:600ms' }, l.e), tg = S('g', {}, fi), n = wrap(tg, 30, 0, l.x.label, W - 36, 2, 'start'), hh = (n + 1) * 17;
+      const fi = S('g', { class: 'pc-fi', style: '--d:600ms' }, l.e), tg = S('g', {}, fi), n = wrap(tg, 30, 0, l.x.label, W - 36, 3, 'start'), hh = (n + 1) * 17;
       S('text', { x: 30, y: n * 17, class: 'pc-val' }, tg, l.vt); tg.setAttribute('transform', `translate(0,${y + 13})`);
       S('rect', { x: 4, y: y + 1, width: 18, height: 18, fill: `url(#${id}p${l.q})`, stroke: 'var(--pc-fg)', 'stroke-width': 1 }, fi);
       S('rect', { x: 0, y: y - 4, width: W, height: hh + 8, class: 'pc-hit' }, l.e); y += hh + 10;
@@ -421,14 +430,14 @@ Chart.prototype.key = function (e) {
 Chart.prototype.destroy = function () { if (this.ro) this.ro.disconnect(); if (this.tm) { this.tm.mo.disconnect(); this.tm.mq.removeEventListener('change', this.tm.f); this.tm = null; } this.host.textContent = ''; this.host.classList.remove('pc', 'pc-in'); };
 
 /* ---------- Kennzahl-Kacheln ---------- */
-function Tiles(host, spec, opt) {
+function Tiles(host, spec, opt) { const LB = Object.assign({}, DEF, opt && opt.labels, spec.labels);
   this.host = host; opt = opt || {}; const lang = setup(host, spec, opt, 'pc-tilebox');
   if (spec.title) H('h3', { class: 'pc-title' }, host, spec.title);
   const ul = H('ul', { class: 'pc-tiles' }, host), anim = [];
   (spec.items || []).forEach(it => {
     const f = fmtFactory(lang, it.digits != null ? it.digits : 2), li = H('li', { class: 'pc-tile pc-tone-' + (it.tone || 'neutral') }, ul);
     H('span', { class: 'pc-tl' }, li, it.label);
-    const txt = it.value == null ? DEF.na : f(it.value) + (it.unit || ''), v = H('b', { class: 'pc-tv', 'aria-hidden': 'true' }, li, txt);
+    const txt = it.value == null ? LB.na : f(it.value) + (it.unit || ''), v = H('b', { class: 'pc-tv', 'aria-hidden': 'true' }, li, txt);
     H('span', { class: 'pc-sr' }, li, txt);
     const sub = H('span', { class: 'pc-ts' }, li);
     if (it.mark) H('span', { class: 'pc-tm', 'aria-hidden': 'true' }, sub, it.mark + ' ');
@@ -446,19 +455,19 @@ function Tiles(host, spec, opt) {
 }
 
 /* ---------- Sparkline ---------- */
-function Spark(host, spec, opt) {
+function Spark(host, spec, opt) { const LB = Object.assign({}, DEF, opt && opt.labels, spec.labels);
   this.host = host; opt = opt || {}; norm(spec); const lang = setup(host, spec, opt, 'pc-spark'), s0 = spec.series[0], vals = s0.values, n = vals.length;
   const f = fmtFactory(lang, spec.digits != null ? spec.digits : 2), u = spec.unit || '', w = spec.width || 120, h = spec.height || 32, pad = 5, lab = i => (spec.categories && spec.categories[i] ? spec.categories[i].label + ': ' : '');
   const nums = vals.filter(v => v != null); let lo = Math.min.apply(0, nums), hi = Math.max.apply(0, nums); if (hi - lo < 1e-9) { lo -= 1; hi += 1; }
-  if (!nums.length) { H('b', { class: 'pc-spv' }, host, DEF.na); host.setAttribute('role', 'img'); host.setAttribute('aria-label', (spec.title || '') + ' ' + DEF.na); return; }
+  if (!nums.length) { H('b', { class: 'pc-spv' }, host, LB.na); host.setAttribute('role', 'img'); host.setAttribute('aria-label', (spec.title || '') + ' ' + LB.na); return; }
   const X = i => pad + i * (w - 2 * pad) / Math.max(1, n - 1), Y = v => h - pad - (v - lo) / (hi - lo) * (h - 2 * pad), pts = vals.map((v, i) => v == null ? null : [X(i), Y(v), i]).filter(Boolean);
-  host.setAttribute('role', 'group'); host.setAttribute('tabindex', '0'); host.setAttribute('aria-roledescription', 'chart'); host.setAttribute('aria-label', (spec.title || '') + '. ' + (spec.keys || DEF.keys));
+  host.setAttribute('role', 'group'); host.setAttribute('tabindex', '0'); host.setAttribute('aria-roledescription', 'chart'); host.setAttribute('aria-label', (spec.title || '') + '. ' + (spec.keys || LB.keys));
   const svg = S('svg', { width: w, height: h, viewBox: '0 0 ' + w + ' ' + h, 'aria-hidden': 'true', focusable: 'false', class: 'pc-spk' }, host), d = pts.map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join('L');
   S('path', { d: 'M' + d + 'L' + pts[pts.length - 1][0] + ' ' + (h - pad) + 'L' + pts[0][0] + ' ' + (h - pad) + 'Z', class: 'pc-area pc-soft pc-f0' }, svg);
   S('path', { d: 'M' + d, pathLength: 1, class: 'pc-line pc-s0' }, svg);
   const last = pts[pts.length - 1], dot = S('circle', { cx: last[0], cy: last[1], r: 4, class: 'pc-m0 pc-spd' }, svg), val = H('b', { class: 'pc-spv' }, host, f(vals[last[2]]) + u), live = H('span', { class: 'pc-sr', 'aria-live': 'polite' }, host);
   const t = H('table', { class: 'pc-sr' }, host); H('caption', {}, t, spec.title || ''); const tb = H('tbody', {}, t);
-  vals.forEach((v, i) => { const r = H('tr', {}, tb); H('th', { scope: 'row' }, r, spec.categories ? spec.categories[i].label : '#' + (i + 1)); H('td', {}, r, v == null ? DEF.na : f(v) + u); });
+  vals.forEach((v, i) => { const r = H('tr', {}, tb); H('th', { scope: 'row' }, r, spec.categories ? spec.categories[i].label : '#' + (i + 1)); H('td', {}, r, v == null ? LB.na : f(v) + u); });
   let cur = null;
   const at = i => { cur = i; const p = pts.find(q => q[2] === i) || last; dot.setAttribute('cx', p[0]); dot.setAttribute('cy', p[1]); dot.classList.toggle('pc-cur', i != null); val.textContent = f(vals[p[2]]) + u; if (i != null) live.textContent = lab(p[2]) + f(vals[p[2]]) + u; };
   host.onkeydown = e => {
@@ -475,7 +484,7 @@ function Spark(host, spec, opt) {
 Spark.prototype.destroy = function () { this.host.textContent = ''; };
 
 /* ---------- Tabelle ---------- */
-function Tab(host, spec, opt) {
+function Tab(host, spec, opt) { const LB = Object.assign({}, DEF, opt && opt.labels, spec.labels);
   const lang = setup(host, spec, opt || {}), f = fmtFactory(lang, spec.digits != null ? spec.digits : 2);
   const w = H('div', { class: 'pc-tablewrap' }, host), t = H('table', { class: 'pc-table' }, w);
   H('caption', {}, t, spec.title);
@@ -484,7 +493,7 @@ function Tab(host, spec, opt) {
   const tb = H('tbody', {}, t);
   spec.categories.forEach((c, i) => {
     const r = H('tr', {}, tb); H('th', { scope: 'row' }, r, c.label);
-    spec.series.forEach(s => H('td', {}, r, s.values[i] == null ? (spec.na || DEF.na) : f(s.values[i]) + (spec.unit || '')));
+    spec.series.forEach(s => H('td', {}, r, s.values[i] == null ? (spec.na || LB.na) : f(s.values[i]) + (spec.unit || '')));
   });
 }
 

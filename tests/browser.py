@@ -48,7 +48,7 @@ async def main():
                     if r.get('id') == i: return r.get('result', {})
             async def js(e):
                 r = await cmd('Runtime.evaluate', expression=e, awaitPromise=True, returnByValue=True)
-                if 'exceptionDetails' in r: errs.append(str(r['exceptionDetails'])[:200])
+                if 'exceptionDetails' in r: errs.append(r['exceptionDetails'].get('exception', {}).get('description', str(r['exceptionDetails']))[:300])
                 return r.get('result', {}).get('value')
             async def key(k, code=None, vk=0):
                 for t in ('keyDown', 'keyUp'): await cmd('Input.dispatchKeyEvent', type=t, key=k, code=code or k, windowsVirtualKeyCode=vk)
@@ -153,6 +153,15 @@ async def main():
                 await js(f"document.querySelectorAll('#{i} .pc-view button')[1].click()"); await asyncio.sleep(.2)
                 ok(await js(f"(function(){{var t=document.querySelector('#{i} .pc-tablewrap');return !t.hidden&&t.querySelectorAll('tbody tr').length>=2&&!!t.querySelector('th[scope=row]')}})()"), f'{i}: Tabellenansicht')
                 await js(f"document.querySelectorAll('#{i} .pc-view button')[0].click()"); await asyncio.sleep(.3)
+            # Ring/Torte mit langen Beschriftungen: kein Text ausserhalb des Diagrammkastens, Schrift >= 13 px, bei allen Breiten
+            for w_ in (360, 390, 768, 1100, 1440):
+                await load(w=w_, scheme='light', mobile=w_ < 500)
+                bad = await js("""(function(){var out=[],L=['Glocken, Platten und gestimmtes Schlagwerk','Holzblasinstrumente','Blechblasinstrumente','Freie Zungen und Lamellen','Gestrichene Saiten','Supercalifragilisticexpialidocious-Instrumente'];
+                  ['pie','donut'].forEach(function(ty){var box=document.createElement('div');box.style.cssText='width:'+Math.min(innerWidth-32,620)+'px;margin:0';document.body.appendChild(box);
+                    PsoCharts.create(box,{type:ty,title:'T',categories:L.map(function(l){return{label:l}}),series:[{name:'S',values:[31,44,18,39,17,9]}],maxSlices:12,other:false,motion:'off'});
+                    var r=box.getBoundingClientRect();box.querySelectorAll('svg.pc-svg text').forEach(function(t){var b=t.getBoundingClientRect(),fs=parseFloat(getComputedStyle(t).fontSize);
+                      if(b.width&&(b.left<r.left-1||b.right>r.right+1))out.push(ty+':'+Math.round(r.width)+':'+t.textContent.slice(0,14));if(fs<13)out.push('klein:'+t.textContent.slice(0,10))});box.remove()});return out})()""")
+                ok(not bad, f'Ring/Torte lange Beschriftungen bei {w_} px: {bad[:4]}')
             # Sparkline: Tastatur
             await js("var sp=document.querySelector('#p_spark .pc-spark');sp.scrollIntoView();sp.focus()"); await asyncio.sleep(.3)
             await key('ArrowLeft', 'ArrowLeft', 37)

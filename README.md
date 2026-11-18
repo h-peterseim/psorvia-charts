@@ -76,7 +76,7 @@ The core covers bars, lines, area, pie, ring, stacked and 100 % bars, tiles, spa
 | `maxSlices`, `other`, `center` | `6`, `true`, `'sum'` | Pie and ring, see above |
 | `bins`, `binWidth` | automatic | Histogram |
 | `min`, `max`, `bands` | `0`, `100` | Gauge |
-| `labels` | English | `{ chart, table, view, na, hint, keys, other, sum, mean, share, count, range, size }`, your own wording |
+| `labels` | English | `{ chart, table, view, series, na, source, hint, keys, other, sum, mean, share, count, range, size }`, your own wording; also accepted as an option of `create()` and `auto()` for all charts at once |
 | `lang` | page language | Number format, via `Intl.NumberFormat` |
 | `style` | `house` | `house`, `gauge`, `plain` or `genre` |
 | `theme` | automatic | `light` or `dark` to force one |

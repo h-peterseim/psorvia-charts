@@ -6,6 +6,9 @@
 - Printing shows all charts in their final state, also those that were never scrolled into view.
 - Demo page `index.html` for GitHub Pages: every chart type live, four styles in light and dark, code to copy for each example, 24 languages.
 - Bar charts choose the number of axis marks by label width, so labels such as "40 %" no longer overlap on narrow screens.
+- Pie and donut charts keep long labels inside the chart box: side columns and ring size are balanced, long words are broken, the legend takes over on narrow screens; text stays at 13 px or more.
+- `labels` can also be passed as an option to `create()` and `auto()` and then applies to all charts, including tiles, sparklines and tables.
+- Tiles line up label, value and note across a row and use one border width for all tones.
 
 ## 1.1.0
 - New types: `pie` and `donut` (value and share on leader lines, small slices merged into "Other" from 7 slices on, total or average in the ring), `stacked` and `percent` bars, `area` and stacked area, `spark` (also inside tiles), and in the optional file `psorvia-charts.extra.js`: `scatter` (points and bubbles), `hist`, `gauge`, `heat` and `radar` (3 to 8 axes).
