@@ -13,6 +13,7 @@ Stupci, linije, kružni i prstenasti grafikoni, složeni stupci i stupci od 100 
 ```html
 <link rel="stylesheet" href="psorvia-charts.css">
 <script src="psorvia-charts.js"></script>
+<script src="psorvia-charts.extra.js"></script> <!-- samo za scatter, hist, gauge, heat, radar -->
 <div id="speed"></div>
 <script>
 PsoCharts.create(document.getElementById('speed'), {

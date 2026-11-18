@@ -13,6 +13,7 @@ PSOrvia · [psorvia.io](https://psorvia.io)
 ```html
 <link rel="stylesheet" href="psorvia-charts.css">
 <script src="psorvia-charts.js"></script>
+<script src="psorvia-charts.extra.js"></script> <!-- yalnızca scatter, hist, gauge, heat, radar için -->
 <div id="speed"></div>
 <script>
 PsoCharts.create(document.getElementById('speed'), {
@@ -26,7 +27,7 @@ PsoCharts.create(document.getElementById('speed'), {
 ```html
 <script type="module">
 import { create, auto } from './psorvia-charts.esm.js';
-import './psorvia-charts.extra.esm.js'; // only for scatter, hist, gauge, heat, radar
+import './psorvia-charts.extra.esm.js'; // yalnızca scatter, hist, gauge, heat, radar için
 auto();
 </script>
 ```

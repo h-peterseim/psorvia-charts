@@ -13,6 +13,7 @@ Bare, linii, grafice circulare și inel, bare suprapuse și de 100 %, arii, punc
 ```html
 <link rel="stylesheet" href="psorvia-charts.css">
 <script src="psorvia-charts.js"></script>
+<script src="psorvia-charts.extra.js"></script> <!-- doar pentru scatter, hist, gauge, heat, radar -->
 <div id="speed"></div>
 <script>
 PsoCharts.create(document.getElementById('speed'), {

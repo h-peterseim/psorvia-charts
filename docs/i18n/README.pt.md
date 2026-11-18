@@ -13,6 +13,7 @@ Barras, linhas, pizza e anel, barras empilhadas e de 100 %, áreas, dispersão e
 ```html
 <link rel="stylesheet" href="psorvia-charts.css">
 <script src="psorvia-charts.js"></script>
+<script src="psorvia-charts.extra.js"></script> <!-- só para scatter, hist, gauge, heat, radar -->
 <div id="speed"></div>
 <script>
 PsoCharts.create(document.getElementById('speed'), {

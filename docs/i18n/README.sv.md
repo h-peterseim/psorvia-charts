@@ -13,6 +13,7 @@ Staplar, linjer, cirkel- och ringdiagram, staplade och 100-procentsstaplar, ytor
 ```html
 <link rel="stylesheet" href="psorvia-charts.css">
 <script src="psorvia-charts.js"></script>
+<script src="psorvia-charts.extra.js"></script> <!-- endast för scatter, hist, gauge, heat, radar -->
 <div id="speed"></div>
 <script>
 PsoCharts.create(document.getElementById('speed'), {

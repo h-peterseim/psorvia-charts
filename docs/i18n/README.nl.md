@@ -13,6 +13,7 @@ Staven, lijnen, taart en ring, gestapelde en 100 %-staven, vlakken, spreiding en
 ```html
 <link rel="stylesheet" href="psorvia-charts.css">
 <script src="psorvia-charts.js"></script>
+<script src="psorvia-charts.extra.js"></script> <!-- alleen voor scatter, hist, gauge, heat, radar -->
 <div id="speed"></div>
 <script>
 PsoCharts.create(document.getElementById('speed'), {

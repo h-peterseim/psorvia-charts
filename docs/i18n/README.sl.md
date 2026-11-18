@@ -13,6 +13,7 @@ Stolpci, črte, tortni in obročni grafikoni, naloženi in 100-odstotni stolpci,
 ```html
 <link rel="stylesheet" href="psorvia-charts.css">
 <script src="psorvia-charts.js"></script>
+<script src="psorvia-charts.extra.js"></script> <!-- samo za scatter, hist, gauge, heat, radar -->
 <div id="speed"></div>
 <script>
 PsoCharts.create(document.getElementById('speed'), {

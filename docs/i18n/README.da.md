@@ -13,6 +13,7 @@ Søjler, linjer, cirkel og ring, stablede og 100 %-søjler, arealer, punktdiagra
 ```html
 <link rel="stylesheet" href="psorvia-charts.css">
 <script src="psorvia-charts.js"></script>
+<script src="psorvia-charts.extra.js"></script> <!-- kun til scatter, hist, gauge, heat, radar -->
 <div id="speed"></div>
 <script>
 PsoCharts.create(document.getElementById('speed'), {

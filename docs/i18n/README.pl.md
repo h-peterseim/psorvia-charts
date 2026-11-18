@@ -13,6 +13,7 @@ Słupki, linie, wykresy kołowy i pierścieniowy, słupki skumulowane i 100 %, o
 ```html
 <link rel="stylesheet" href="psorvia-charts.css">
 <script src="psorvia-charts.js"></script>
+<script src="psorvia-charts.extra.js"></script> <!-- tylko dla scatter, hist, gauge, heat, radar -->
 <div id="speed"></div>
 <script>
 PsoCharts.create(document.getElementById('speed'), {

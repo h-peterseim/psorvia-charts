@@ -13,6 +13,7 @@ Sloupce, čáry, koláč a prstenec, skládané a 100% sloupce, plochy, bodový 
 ```html
 <link rel="stylesheet" href="psorvia-charts.css">
 <script src="psorvia-charts.js"></script>
+<script src="psorvia-charts.extra.js"></script> <!-- jen pro scatter, hist, gauge, heat, radar -->
 <div id="speed"></div>
 <script>
 PsoCharts.create(document.getElementById('speed'), {

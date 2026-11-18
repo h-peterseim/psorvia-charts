@@ -13,6 +13,7 @@ Tulbad, jooned, sektor- ja rõngasdiagramm, virnastatud ja 100 % tulbad, alad, p
 ```html
 <link rel="stylesheet" href="psorvia-charts.css">
 <script src="psorvia-charts.js"></script>
+<script src="psorvia-charts.extra.js"></script> <!-- ainult scatter, hist, gauge, heat, radar jaoks -->
 <div id="speed"></div>
 <script>
 PsoCharts.create(document.getElementById('speed'), {

@@ -13,6 +13,7 @@ Oszlopok, vonalak, kör- és gyűrűdiagram, halmozott és 100 %-os oszlopok, te
 ```html
 <link rel="stylesheet" href="psorvia-charts.css">
 <script src="psorvia-charts.js"></script>
+<script src="psorvia-charts.extra.js"></script> <!-- csak scatter, hist, gauge, heat, radar esetén -->
 <div id="speed"></div>
 <script>
 PsoCharts.create(document.getElementById('speed'), {

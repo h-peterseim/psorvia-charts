@@ -13,6 +13,7 @@ Balken, Linien, Kreis- und Ringdiagramme, gestapelte und 100-%-Balken, Flächen,
 ```html
 <link rel="stylesheet" href="psorvia-charts.css">
 <script src="psorvia-charts.js"></script>
+<script src="psorvia-charts.extra.js"></script> <!-- nur für scatter, hist, gauge, heat, radar -->
 <div id="speed"></div>
 <script>
 PsoCharts.create(document.getElementById('speed'), {

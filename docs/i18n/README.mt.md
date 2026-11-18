@@ -13,6 +13,7 @@ Vireg, linji, pie u ring, vireg impilati u ta' 100 %, erjas, scatter u bubbles, 
 ```html
 <link rel="stylesheet" href="psorvia-charts.css">
 <script src="psorvia-charts.js"></script>
+<script src="psorvia-charts.extra.js"></script> <!-- biss għal scatter, hist, gauge, heat, radar -->
 <div id="speed"></div>
 <script>
 PsoCharts.create(document.getElementById('speed'), {

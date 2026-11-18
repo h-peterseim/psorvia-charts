@@ -13,6 +13,7 @@ Barres, courbes, secteurs et anneaux, barres empilées et à 100 %, aires, nuage
 ```html
 <link rel="stylesheet" href="psorvia-charts.css">
 <script src="psorvia-charts.js"></script>
+<script src="psorvia-charts.extra.js"></script> <!-- uniquement pour scatter, hist, gauge, heat, radar -->
 <div id="speed"></div>
 <script>
 PsoCharts.create(document.getElementById('speed'), {

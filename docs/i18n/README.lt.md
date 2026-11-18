@@ -13,6 +13,7 @@ Stulpeliai, linijos, skritulinė ir žiedinė diagramos, sukrautieji ir 100 % st
 ```html
 <link rel="stylesheet" href="psorvia-charts.css">
 <script src="psorvia-charts.js"></script>
+<script src="psorvia-charts.extra.js"></script> <!-- tik scatter, hist, gauge, heat, radar -->
 <div id="speed"></div>
 <script>
 PsoCharts.create(document.getElementById('speed'), {
