@@ -57,6 +57,9 @@ async def main():
                 await cmd('Emulation.setDeviceMetricsOverride', width=w, height=h, deviceScaleFactor=1, mobile=mobile)
                 await cmd('Emulation.setEmulatedMedia', features=[{'name': 'prefers-color-scheme', 'value': scheme}, {'name': 'prefers-reduced-motion', 'value': 'reduce' if reduce else 'no-preference'}])
                 await cmd('Page.navigate', url=url); await asyncio.sleep(1.2)
+                for _ in range(60):
+                    if await js("document.readyState==='complete'&&!!document.getElementById('st')"): break
+                    await asyncio.sleep(.25)
             async def setsel(i, v):
                 await js(f"(function(){{var s=document.getElementById('{i}');s.value='{v}';s.dispatchEvent(new Event('change'))}})()"); await asyncio.sleep(.3)
             async def settle():
