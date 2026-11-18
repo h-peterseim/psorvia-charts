@@ -81,7 +81,7 @@ auto();
 | `style` | `house` | `house`, `gauge`, `plain` или `genre` |
 | `theme` | автоматично | `light` или `dark` за принудителен избор |
 | `motion` | автоматично | `off` изключва анимацията |
-| `items` | | Само за плочки: `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` е `good`, `bad` или `neutral` |
+| `items` | | Само за плочки: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, `tone` е `good`, `bad` или `neutral` |
 
 ## API
 

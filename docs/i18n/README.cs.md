@@ -81,7 +81,7 @@ Jádro pokrývá bars, lines, area, pie, ring, skládané a 100% sloupce, dlažd
 | `style` | `house` | `house`, `gauge`, `plain` nebo `genre` |
 | `theme` | automaticky | `light` nebo `dark` pro pevnou volbu |
 | `motion` | automaticky | `off` vypne animaci |
-| `items` | | Jen dlaždice: `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` je `good`, `bad` nebo `neutral` |
+| `items` | | Jen dlaždice: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, `tone` je `good`, `bad` nebo `neutral` |
 
 ## API
 

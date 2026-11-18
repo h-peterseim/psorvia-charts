@@ -81,7 +81,7 @@ De kern omvat bars, lines, area, pie, ring, gestapelde en 100 %-staven, tiles, s
 | `style` | `house` | `house`, `gauge`, `plain` of `genre` |
 | `theme` | automatisch | `light` of `dark` om er een te forceren |
 | `motion` | automatisch | `off` schakelt de animatie uit |
-| `items` | | Alleen tegels: `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` is `good`, `bad` of `neutral` |
+| `items` | | Alleen tegels: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, `tone` is `good`, `bad` of `neutral` |
 
 ## API
 

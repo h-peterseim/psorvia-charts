@@ -81,7 +81,7 @@ Jezgra pokriva stupce, linije, površine, pie, prsten, složene stupce i stupce 
 | `style` | `house` | `house`, `gauge`, `plain` ili `genre` |
 | `theme` | automatski | `light` ili `dark` za nametanje jedne |
 | `motion` | automatski | `off` isključuje animaciju |
-| `items` | | Samo pločice: `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` je `good`, `bad` ili `neutral` |
+| `items` | | Samo pločice: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, `tone` je `good`, `bad` ili `neutral` |
 
 ## API
 

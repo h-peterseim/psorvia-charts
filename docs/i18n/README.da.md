@@ -81,7 +81,7 @@ Kernen dækker bars, lines, area, pie, ring, stablede og 100 %-søjler, tiles, s
 | `style` | `house` | `house`, `gauge`, `plain` eller `genre` |
 | `theme` | automatisk | `light` eller `dark` for at gennemtvinge ét |
 | `motion` | automatisk | `off` slår animationen fra |
-| `items` | | Kun fliser: `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` er `good`, `bad` eller `neutral` |
+| `items` | | Kun fliser: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, `tone` er `good`, `bad` eller `neutral` |
 
 ## API
 

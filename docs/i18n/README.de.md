@@ -81,7 +81,7 @@ Der Kern enthält Balken, Linien, Fläche, Kreis, Ring, gestapelte und 100-%-Bal
 | `style` | `house` | `house`, `gauge`, `plain` oder `genre` |
 | `theme` | automatisch | `light` oder `dark`, um eines zu erzwingen |
 | `motion` | automatisch | `off` schaltet die Animation aus |
-| `items` | | Nur Kacheln: `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` ist `good`, `bad` oder `neutral` |
+| `items` | | Nur Kacheln: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, `tone` ist `good`, `bad` oder `neutral` |
 
 ## API
 

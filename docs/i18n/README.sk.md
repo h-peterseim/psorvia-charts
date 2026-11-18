@@ -81,7 +81,7 @@ Jadro obsahuje stĺpce, čiary, plochu, koláč, prstenec, skladané a 100 % st�
 | `style` | `house` | `house`, `gauge`, `plain` alebo `genre` |
 | `theme` | automaticky | `light` alebo `dark` na vynútenie jednej |
 | `motion` | automaticky | `off` vypne animáciu |
-| `items` | | Iba dlaždice: `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` je `good`, `bad` alebo `neutral` |
+| `items` | | Iba dlaždice: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, `tone` je `good`, `bad` alebo `neutral` |
 
 ## API
 

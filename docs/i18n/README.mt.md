@@ -81,7 +81,7 @@ Il-qalba tkopri bars, lines, area, pie, ring, vireg impilati u ta' 100 %, tiles,
 | `style` | `house` | `house`, `gauge`, `plain` jew `genre` |
 | `theme` | awtomatiku | `light` jew `dark` biex tiġi mġiegħla waħda |
 | `motion` | awtomatiku | `off` jitfi l-animazzjoni |
-| `items` | | Tiles biss: `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` huwa `good`, `bad` jew `neutral` |
+| `items` | | Tiles biss: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, `tone` huwa `good`, `bad` jew `neutral` |
 
 ## API
 

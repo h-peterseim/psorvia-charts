@@ -81,7 +81,7 @@ Nucleul cuprinde bare, linii, arie, grafic circular, inel, bare suprapuse și de
 | `style` | `house` | `house`, `gauge`, `plain` sau `genre` |
 | `theme` | automat | `light` sau `dark` pentru a forța una |
 | `motion` | automat | `off` oprește animația |
-| `items` | | Doar plăci: `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` este `good`, `bad` sau `neutral` |
+| `items` | | Doar plăci: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, `tone` este `good`, `bad` sau `neutral` |
 
 ## API
 

@@ -81,7 +81,7 @@ Branduolys apima bars, lines, area, pie, ring, sukrautuosius ir 100 % stulpelius
 | `style` | `house` | `house`, `gauge`, `plain` arba `genre` |
 | `theme` | automatinė | `light` arba `dark`, kad būtų priverstinai nustatyta viena |
 | `motion` | automatinis | `off` išjungia animaciją |
-| `items` | | Tik plytelėms: `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` yra `good`, `bad` arba `neutral` |
+| `items` | | Tik plytelėms: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, `tone` yra `good`, `bad` arba `neutral` |
 
 ## API
 

@@ -81,7 +81,7 @@ A `values` a `series` és `categories` helyett gyorsírás egyetlen sorozathoz (
 | `style` | `house` | `house`, `gauge`, `plain` vagy `genre` |
 | `theme` | automatikus | `light` vagy `dark` az egyik kikényszerítéséhez |
 | `motion` | automatikus | az `off` kikapcsolja az animációt |
-| `items` | | Csak csempéknél: `[{ label, value, unit, digits, mark, sub, tone }]`, a `tone` értéke `good`, `bad` vagy `neutral` |
+| `items` | | Csak csempéknél: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, a `tone` értéke `good`, `bad` vagy `neutral` |
 
 ## API
 

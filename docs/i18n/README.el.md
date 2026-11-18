@@ -81,7 +81,7 @@ auto();
 | `style` | `house` | `house`, `gauge`, `plain` ή `genre` |
 | `theme` | αυτόματο | `light` ή `dark` για επιβολή ενός |
 | `motion` | αυτόματο | Το `off` απενεργοποιεί την κινούμενη εικόνα |
-| `items` | | Μόνο πλακίδια: `[{ label, value, unit, digits, mark, sub, tone }]`, το `tone` είναι `good`, `bad` ή `neutral` |
+| `items` | | Μόνο πλακίδια: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, το `tone` είναι `good`, `bad` ή `neutral` |
 
 ## API
 

@@ -81,7 +81,7 @@ El núcleo cubre bars, lines, area, pie, ring, barras apiladas y al 100 %, tiles
 | `style` | `house` | `house`, `gauge`, `plain` o `genre` |
 | `theme` | automático | `light` o `dark` para forzar uno |
 | `motion` | automático | `off` desactiva la animación |
-| `items` | | Solo tarjetas: `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` es `good`, `bad` o `neutral` |
+| `items` | | Solo tarjetas: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, `tone` es `good`, `bad` o `neutral` |
 
 ## API
 

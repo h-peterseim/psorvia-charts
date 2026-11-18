@@ -81,7 +81,7 @@ Tuum katab bars, lines, area, pie, ring, virnastatud ja 100 % tulbad, tiles, spa
 | `style` | `house` | `house`, `gauge`, `plain` või `genre` |
 | `theme` | automaatne | `light` või `dark` ühe sundimiseks |
 | `motion` | automaatne | `off` lülitab animatsiooni välja |
-| `items` | | Ainult paanid: `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` on `good`, `bad` või `neutral` |
+| `items` | | Ainult paanid: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, `tone` on `good`, `bad` või `neutral` |
 
 ## API
 

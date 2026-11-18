@@ -81,7 +81,7 @@ Il nucleo copre barre, linee, aree, torte, anelli, barre impilate e al 100%, riq
 | `style` | `house` | `house`, `gauge`, `plain` o `genre` |
 | `theme` | automatico | `light` o `dark` per forzarne uno |
 | `motion` | automatico | `off` disattiva l'animazione |
-| `items` | | Solo riquadri: `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` è `good`, `bad` o `neutral` |
+| `items` | | Solo riquadri: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, `tone` è `good`, `bad` o `neutral` |
 
 ## API
 

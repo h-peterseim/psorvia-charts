@@ -81,7 +81,7 @@ Kodols aptver bars, lines, area, pie, ring, sakrautas un 100 % joslas, flīzes, 
 | `style` | `house` | `house`, `gauge`, `plain` vai `genre` |
 | `theme` | automātiska | `light` vai `dark`, lai uzspiestu vienu |
 | `motion` | automātiska | `off` izslēdz animāciju |
-| `items` | | Tikai flīzēm: `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` ir `good`, `bad` vai `neutral` |
+| `items` | | Tikai flīzēm: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, `tone` ir `good`, `bad` vai `neutral` |
 
 ## API
 

@@ -81,7 +81,7 @@ Jedro obsega stolpce, črte, ploskev, tortni grafikon, obroč, naložene in 100-
 | `style` | `house` | `house`, `gauge`, `plain` ali `genre` |
 | `theme` | samodejno | `light` ali `dark` za izsiljeno izbiro |
 | `motion` | samodejno | `off` izklopi animacijo |
-| `items` | | Samo ploščice: `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` je `good`, `bad` ali `neutral` |
+| `items` | | Samo ploščice: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, `tone` je `good`, `bad` ali `neutral` |
 
 ## API
 

@@ -81,7 +81,7 @@ O núcleo cobre bars, lines, area, pie, ring, barras empilhadas e de 100 %, tile
 | `style` | `house` | `house`, `gauge`, `plain` ou `genre` |
 | `theme` | automático | `light` ou `dark` para forçar um |
 | `motion` | automático | `off` desliga a animação |
-| `items` | | Somente blocos: `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` é `good`, `bad` ou `neutral` |
+| `items` | | Somente blocos: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, `tone` é `good`, `bad` ou `neutral` |
 
 ## API
 

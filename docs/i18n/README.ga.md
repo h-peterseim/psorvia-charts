@@ -81,7 +81,7 @@ Is aicearra do shraith amháin é `values` in ionad `series` agus `categories` (
 | `style` | `house` | `house`, `gauge`, `plain` nó `genre` |
 | `theme` | uathoibríoch | `light` nó `dark` chun ceann amháin a chur i bhfeidhm |
 | `motion` | uathoibríoch | Múchann `off` an bheochan |
-| `items` | | Tíleanna amháin: `[{ label, value, unit, digits, mark, sub, tone }]`, is é `tone` `good`, `bad` nó `neutral` |
+| `items` | | Tíleanna amháin: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, is é `tone` `good`, `bad` nó `neutral` |
 
 ## API
 

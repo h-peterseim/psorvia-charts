@@ -81,7 +81,7 @@ Le noyau couvre les barres, les courbes, les aires, les secteurs, les anneaux, l
 | `style` | `house` | `house`, `gauge`, `plain` ou `genre` |
 | `theme` | automatique | `light` ou `dark` pour en imposer un |
 | `motion` | automatique | `off` désactive l'animation |
-| `items` | | Tuiles uniquement : `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` vaut `good`, `bad` ou `neutral` |
+| `items` | | Tuiles uniquement : `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, `tone` vaut `good`, `bad` ou `neutral` |
 
 ## API
 

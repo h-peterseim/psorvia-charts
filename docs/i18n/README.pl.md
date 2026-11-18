@@ -81,7 +81,7 @@ Rdzeń obejmuje bars, lines, area, pie, ring, słupki skumulowane i 100 %, kafel
 | `style` | `house` | `house`, `gauge`, `plain` lub `genre` |
 | `theme` | automatycznie | `light` lub `dark`, aby wymusić jeden |
 | `motion` | automatycznie | `off` wyłącza animację |
-| `items` | | Tylko kafelki: `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` to `good`, `bad` lub `neutral` |
+| `items` | | Tylko kafelki: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, `tone` to `good`, `bad` lub `neutral` |
 
 ## API
 

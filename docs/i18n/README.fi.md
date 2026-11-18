@@ -81,7 +81,7 @@ Ydin kattaa pylväät, viivat, alueen, ympyrän, renkaan, pinotut ja 100 %:n pyl
 | `style` | `house` | `house`, `gauge`, `plain` tai `genre` |
 | `theme` | automaattinen | `light` tai `dark` pakottamaan toinen |
 | `motion` | automaattinen | `off` sammuttaa animaation |
-| `items` | | Vain laatat: `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` on `good`, `bad` tai `neutral` |
+| `items` | | Vain laatat: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, `tone` on `good`, `bad` tai `neutral` |
 
 ## API
 

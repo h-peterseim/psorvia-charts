@@ -81,7 +81,7 @@ Kärnan omfattar staplar, linjer, yta, cirkel, ring, staplade och 100-procentsst
 | `style` | `house` | `house`, `gauge`, `plain` eller `genre` |
 | `theme` | automatiskt | `light` eller `dark` för att tvinga fram ett |
 | `motion` | automatiskt | `off` stänger av animationen |
-| `items` | | Bara brickor: `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` är `good`, `bad` eller `neutral` |
+| `items` | | Bara brickor: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, `tone` är `good`, `bad` eller `neutral` |
 
 ## API
 

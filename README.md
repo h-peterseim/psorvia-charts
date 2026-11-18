@@ -81,7 +81,7 @@ The core covers bars, lines, area, pie, ring, stacked and 100 % bars, tiles, spa
 | `style` | `house` | `house`, `gauge`, `plain` or `genre` |
 | `theme` | automatic | `light` or `dark` to force one |
 | `motion` | automatic | `off` switches the animation off |
-| `items` | | Tiles only: `[{ label, value, unit, digits, mark, sub, tone }]`, `tone` is `good`, `bad` or `neutral` |
+| `items` | | Tiles only: `[{ label, value, prefix, unit, digits, mark, sub, tone }]`, `tone` is `good`, `bad` or `neutral` |
 
 ## API
 
