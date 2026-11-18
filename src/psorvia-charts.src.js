@@ -437,18 +437,18 @@ function Tiles(host, spec, opt) { const LB = Object.assign({}, DEF, opt && opt.l
   (spec.items || []).forEach(it => {
     const f = fmtFactory(lang, it.digits != null ? it.digits : 2), li = H('li', { class: 'pc-tile pc-tone-' + (it.tone || 'neutral') }, ul);
     H('span', { class: 'pc-tl' }, li, it.label);
-    const txt = it.value == null ? LB.na : f(it.value) + (it.unit || ''), v = H('b', { class: 'pc-tv', 'aria-hidden': 'true' }, li, txt);
+    const pre = it.prefix || '', txt = it.value == null ? LB.na : pre + f(it.value) + (it.unit || ''), v = H('b', { class: 'pc-tv', 'aria-hidden': 'true' }, li, txt);
     H('span', { class: 'pc-sr' }, li, txt);
     const sub = H('span', { class: 'pc-ts' }, li);
     if (it.mark) H('span', { class: 'pc-tm', 'aria-hidden': 'true' }, sub, it.mark + ' ');
     sub.appendChild(document.createTextNode(it.sub || ''));
-    if (it.value != null) anim.push([v, it.value, f, it.unit || '']);
+    if (it.value != null) anim.push([v, it.value, f, it.unit || '', pre]);
     if (it.spark) new Spark(H('span', { class: 'pc-ts' }, li), { type: 'spark', values: it.spark, title: it.label, lang, style: spec.style || opt.style, theme: spec.theme || opt.theme, motion: spec.motion || opt.motion }, {});
   });
   const run = () => {
     if (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches || host.classList.contains('pc-still')) return;
     const t0 = performance.now();
-    const step = t => { const p = clamp((t - t0) / 700, 0, 1), e = 1 - Math.pow(1 - p, 3); anim.forEach(a => { a[0].textContent = a[2](a[1] * e) + a[3]; }); if (p < 1) requestAnimationFrame(step); };
+    const step = t => { const p = clamp((t - t0) / 700, 0, 1), e = 1 - Math.pow(1 - p, 3); anim.forEach(a => { a[0].textContent = a[4] + a[2](a[1] * e) + a[3]; }); if (p < 1) requestAnimationFrame(step); };
     requestAnimationFrame(step);
   };
   reveal(host, run);

@@ -43,7 +43,7 @@ The core covers bars, lines, area, pie, ring, stacked and 100 % bars, tiles, spa
 | `stacked` | One bar per category, the series stacked end to end; value in each segment, total at the end. |
 | `percent` | The same as 100 % bars; each segment shows its share of the category. |
 | `pie`, `donut` | One series, one slice per category, label with value and share on a leader line (on narrow screens in a list below). From 7 slices on, the smallest are merged into "Other" (`maxSlices`, default 6; `other: false` keeps all). The ring shows the total in the middle (`center: 'mean'` for the average, `false` for nothing). |
-| `tiles` | Key-figure tiles with a number that counts up, a mark (▲ ▼ =) and a short text. An item may carry `spark: [values]` for a small line. |
+| `tiles` | Key-figure tiles with a number that counts up, a mark (▲ ▼ =) and a short text. An item may carry `spark: [values]` for a small line and `prefix` (for example `"+"`) shown before the number. |
 | `table` | A plain table. |
 | `spark` | A small line for running text and tiles: `values`, optional `width` and `height`; shows the last value, arrow keys step through the points. |
 | `scatter` | *(extra)* Points or bubbles. Categories are the points, the first series is x, the second y, an optional third the bubble size. |

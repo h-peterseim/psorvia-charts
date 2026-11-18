@@ -1,6 +1,7 @@
 # Changelog
 
 ## 1.1.1
+- Tiles accept `prefix` (for example `"+"`) before the number.
 - Empty, non-finite (NaN, Infinity) and text values are shown as "n/a" instead of "NaN" or "null"; a chart without a title no longer shows "undefined".
 - No more errors for empty histograms, empty sparklines, tiles without items or a chart without series; histograms accept very large data sets (200,000 values and more).
 - Printing shows all charts in their final state, also those that were never scrolled into view.
