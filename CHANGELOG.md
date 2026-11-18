@@ -1,6 +1,7 @@
 # Changelog
 
 ## 1.1.1
+- Two more languages: Norwegian Bokmål (`nb`) and Turkish (`tr`), in the README translations, the demo page and `index.html` (now 26 languages).
 - Tiles accept `prefix` (for example `"+"`) before the number.
 - Empty, non-finite (NaN, Infinity) and text values are shown as "n/a" instead of "NaN" or "null"; a chart without a title no longer shows "undefined".
 - No more errors for empty histograms, empty sparklines, tiles without items or a chart without series; histograms accept very large data sets (200,000 values and more).

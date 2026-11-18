@@ -55,12 +55,12 @@ async def main():
                     if 'Diagramme' not in t and 'barrierefrei' not in t.lower(): fails.append('Sprachwahl de wirkt nicht: '+t)
                     r2=await js("(async function(){var d=document.querySelector('details');d.open=true;var b=d.parentNode.querySelector('.cp');b.click();await new Promise(function(r){setTimeout(r,500)});return document.querySelector('[role=status]').textContent})()")
                     print('kopieren:',repr(r2))
-                    for lng in ['bg','el','ga','mt','fi','hu']:
+                    for lng in ['bg','el','ga','mt','fi','hu','nb','tr']:
                         await js(f"var s=document.getElementById('lg');s.value='{lng}';s.dispatchEvent(new Event('change'))"); await asyncio.sleep(.3)
                         ov2=await js("document.documentElement.scrollWidth")
                         if ov2>w+2: fails.append(f'Sprache {lng}: Ueberlauf {ov2}')
                 if name=='handy-hell':
-                    for lng in ['de','fi','hu','el','bg','mt']:
+                    for lng in ['de','fi','hu','el','bg','mt','nb','tr']:
                         await js(f"var s=document.getElementById('lg');s.value='{lng}';s.dispatchEvent(new Event('change'))"); await asyncio.sleep(.4)
                         ov2=await js("document.documentElement.scrollWidth")
                         if ov2>w+2: fails.append(f'Handy {lng}: Ueberlauf {ov2}')
